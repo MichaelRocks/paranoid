@@ -1,0 +1,9 @@
+apply plugin: 'java'
+apply plugin: 'bintray'
+
+sourceCompatibility = JavaVersion.VERSION_1_6
+targetCompatibility = JavaVersion.VERSION_1_6
+
+jar {
+  destinationDir = file('build/jar')
+}

@@ -1,0 +1,41 @@
+allprojects {
+  ext.kotlinVersion = '1.0.2'
+
+  buildscript {
+    repositories {
+      mavenLocal()
+      jcenter()
+    }
+  }
+
+  repositories {
+    mavenLocal()
+    jcenter()
+  }
+}
+
+allprojects {
+  def properties = new Properties()
+  properties.load(new FileInputStream(new File(rootDir, "version.properties")))
+  def major = properties['version.major'] as int
+  def minor = properties['version.minor'] as int
+  def patch = properties['version.patch'] as int
+  def suffix = properties['version.suffix']?.toString()?.trim() ?: ""
+  def snapshot = properties['version.snapshot'].toBoolean()
+  version = "$major.$minor.$patch" + (suffix.isAllWhitespace() ? '' : "-$suffix") + (snapshot ? '-SNAPSHOT' : '')
+  group = 'io.michaelrocks'
+
+  ext.dryRun = properties['version.dryRun'].toBoolean()
+  ext.publish = properties['version.publish'].toBoolean()
+}
+
+ext {
+  asmVersion = '5.1'
+  gripVersion = '0.4.0-beta'
+  logbackVersion = '1.1.7'
+
+  junitVersion = '4.12'
+
+  androidToolsVersion = '2.1.0'
+  supportVersion = '23.4.0'
+}

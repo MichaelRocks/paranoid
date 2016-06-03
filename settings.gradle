@@ -1,0 +1,9 @@
+rootProject.name = 'paranoid'
+
+include ':core'
+include ':processor'
+include ':gradle-plugin'
+
+if (!properties['bootstrap'].toBoolean()) {
+  include ':sample'
+}

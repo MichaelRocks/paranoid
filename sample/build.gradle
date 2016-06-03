@@ -1,0 +1,34 @@
+buildscript {
+  dependencies {
+    classpath "com.android.tools.build:gradle:$androidToolsVersion"
+    classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlinVersion"
+    classpath "io.michaelrocks:paranoid-gradle-plugin:$version"
+  }
+}
+
+apply plugin: 'com.android.application'
+apply plugin: 'io.michaelrocks.paranoid'
+
+android {
+  compileSdkVersion 23
+  buildToolsVersion "23.0.0"
+
+  defaultConfig {
+    applicationId "io.michaelrocks.paranoid.sample"
+    minSdkVersion 16
+    targetSdkVersion 23
+    versionCode 1
+    versionName "1.0"
+  }
+
+  buildTypes {
+    release {
+      minifyEnabled false
+      proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
+    }
+  }
+}
+
+dependencies {
+  compile "com.android.support:appcompat-v7:$supportVersion"
+}

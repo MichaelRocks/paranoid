@@ -1,0 +1,19 @@
+language: android
+
+android:
+  components:
+    - build-tools-23.0.0
+    - android-23
+    - extra-android-m2repository
+
+script:
+  - ./gradlew publishToMavenLocal -Pbootstrap=true
+
+jdk:
+  - oraclejdk8
+
+sudo: false
+
+cache:
+  directories:
+    - $HOME/.m2
