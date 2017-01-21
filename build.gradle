@@ -1,5 +1,5 @@
 allprojects {
-  ext.kotlinVersion = '1.0.2'
+  ext.kotlinVersion = '1.0.6'
 
   buildscript {
     repositories {
@@ -30,12 +30,12 @@ allprojects {
 }
 
 ext {
-  asmVersion = '5.1'
+  asmVersion = '5.2'
   gripVersion = '0.4.0-beta'
-  logbackVersion = '1.1.7'
+  logbackVersion = '1.1.9'
 
   junitVersion = '4.12'
 
-  androidToolsVersion = '2.1.0'
-  supportVersion = '23.4.0'
+  androidToolsVersion = '2.2.3'
+  supportVersion = '25.1.0'
 }
