@@ -30,4 +30,4 @@ proguard/
 *.iml
 
 # Gradle Wrapper
-!gradle/
+!gradle/wrapper/gradle-wrapper.jar
