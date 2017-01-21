@@ -31,7 +31,7 @@ allprojects {
 
 ext {
   asmVersion = '5.2'
-  gripVersion = '0.4.0-beta'
+  gripVersion = '0.5.1-beta'
   logbackVersion = '1.1.9'
 
   junitVersion = '4.12'
