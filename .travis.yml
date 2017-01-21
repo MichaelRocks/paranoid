@@ -2,18 +2,34 @@ language: android
 
 android:
   components:
-    - build-tools-23.0.0
-    - android-23
+    - tools
+    - tools
+    - platform-tools
+    - build-tools-25.0.2
+    - android-25
+    - extra
     - extra-android-m2repository
 
 script:
-  - ./gradlew publishToMavenLocal -Pbootstrap=true
+  ./gradlew build test
 
 jdk:
   - oraclejdk8
 
 sudo: false
 
+before_cache:
+  - rm -rf $HOME/.m2/repository/io/michaelrocks/lightsaber-
+  - rm -f $HOME/.gradle/caches/modules-2/modules-2.lock
+
 cache:
   directories:
     - $HOME/.m2
+    - $HOME/.gradle/caches/
+    - $HOME/.gradle/wrapper/
+
+install:
+  - ./gradlew assemble publishToMavenLocal -Pbootstrap=true --no-daemon --rerun-tasks
+
+script:
+  - ./gradlew check --no-daemon
