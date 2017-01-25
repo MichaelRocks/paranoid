@@ -27,6 +27,9 @@ class Patcher(private val stringRegistry: StringRegistry) {
   private val logger = getLogger()
 
   fun copyAndPatchClasses(inputPath: File, outputPath: File, analysisResult: AnalysisResult) {
+    logger.info("Patching...")
+    logger.info("   Input: {}", inputPath)
+    logger.info("  Output: {}", outputPath)
     for (sourceFile in inputPath.walk()) {
       val relativePath = sourceFile.toRelativeString(inputPath)
       val targetFile = File(outputPath, relativePath)
@@ -54,7 +57,9 @@ class Patcher(private val stringRegistry: StringRegistry) {
   }
 
   private fun patchClass(sourceFile: File, targetFile: File, configuration: ClassConfiguration) {
-    configuration.dump()
+    logger.debug("Patching class...")
+    logger.debug("  Source: {}", sourceFile)
+    logger.debug("  Target: {}", targetFile)
     val reader = ClassReader(sourceFile.readBytes())
     val writer = ClassWriter(reader, ClassWriter.COMPUTE_MAXS or ClassWriter.COMPUTE_FRAMES)
     val stringLiteralsPatcher = StringLiteralsClassPatcher(stringRegistry, writer)
@@ -62,15 +67,5 @@ class Patcher(private val stringRegistry: StringRegistry) {
     reader.accept(stringConstantsPatcher, ClassReader.SKIP_FRAMES)
     targetFile.parentFile.mkdirs()
     targetFile.writeBytes(writer.toByteArray())
-  }
-
-  private fun ClassConfiguration.dump() {
-    logger.info("Patching class {}...", container)
-    if (constantStringsByFieldName.isNotEmpty()) {
-      logger.info("  Constants:")
-      constantStringsByFieldName.forEach { field ->
-        logger.info("  - {} = \"{}\"", field.key, field.value)
-      }
-    }
   }
 }

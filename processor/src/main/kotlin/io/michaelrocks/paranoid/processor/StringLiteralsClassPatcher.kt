@@ -1,5 +1,5 @@
 /*
- * Copyright 2016 Michael Rozumyanskiy
+ * Copyright 2017 Michael Rozumyanskiy
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,6 +16,7 @@
 
 package io.michaelrocks.paranoid.processor
 
+import io.michaelrocks.paranoid.processor.logging.getLogger
 import org.objectweb.asm.ClassVisitor
 import org.objectweb.asm.MethodVisitor
 import org.objectweb.asm.Opcodes.ASM5
@@ -25,6 +26,22 @@ class StringLiteralsClassPatcher(
     private val stringRegistry: StringRegistry,
     delegate: ClassVisitor
 ) : ClassVisitor(ASM5, delegate) {
+
+  private val logger = getLogger()
+
+  private var className: String = ""
+
+  override fun visit(
+      version: Int,
+      access: Int,
+      name: String,
+      signature: String?,
+      superName: String?,
+      interfaces: Array<out String>?
+  ) {
+    super.visit(version, access, name, signature, superName, interfaces)
+    className = name
+  }
 
   override fun visitMethod(
       access: Int,
@@ -44,6 +61,8 @@ class StringLiteralsClassPatcher(
       }
 
       private fun replaceStringWithDeobfuscationMethod(string: String) {
+        logger.info("{}.{}{}:", className, name, desc)
+        logger.info("  Obfuscating string literal: \"{}\"", string)
         val stringId = stringRegistry.registerString(string)
         push(stringId)
         invokeStatic(DEOBFUSCATOR_TYPE, DEOBFUSCATION_METHOD)

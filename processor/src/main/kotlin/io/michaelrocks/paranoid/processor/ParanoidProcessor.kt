@@ -1,5 +1,5 @@
 /*
- * Copyright 2016 Michael Rozumyanskiy
+ * Copyright 2017 Michael Rozumyanskiy
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -44,8 +44,13 @@ class ParanoidProcessor(
       logger.info("No classes to obfuscate")
     } else {
       logger.info("Classes to obfuscate:")
-      configurationsByType.keys.forEach {
-        logger.info("  {}", it)
+      configurationsByType.forEach {
+        val (type, configuration) = it
+        logger.info("  {}:", type.internalName)
+        configuration.constantStringsByFieldName.forEach {
+          val (field, string) = it
+          logger.info("    {} = \"{}\"", field, string)
+        }
       }
     }
   }

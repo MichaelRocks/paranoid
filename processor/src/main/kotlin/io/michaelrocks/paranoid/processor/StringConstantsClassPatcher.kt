@@ -17,6 +17,7 @@
 package io.michaelrocks.paranoid.processor
 
 import io.michaelrocks.grip.mirrors.toAsmType
+import io.michaelrocks.paranoid.processor.logging.getLogger
 import org.objectweb.asm.ClassVisitor
 import org.objectweb.asm.FieldVisitor
 import org.objectweb.asm.MethodVisitor
@@ -31,6 +32,8 @@ class StringConstantsClassPatcher(
     private val configuration: ClassConfiguration,
     delegate: ClassVisitor
 ) : ClassVisitor(ASM5, delegate) {
+
+  private val  logger = getLogger()
 
   private var isStaticInitializerPatched = false
 
@@ -88,6 +91,8 @@ class StringConstantsClassPatcher(
       isStaticInitializerPatched = true
       return object : GeneratorAdapter(ASM5, visitor, access, name, desc) {
         override fun visitCode() {
+          logger.info("{}:", configuration.container.internalName)
+          logger.info("  Patching <clinit>...")
           super.visitCode()
           for ((field, value) in configuration.constantStringsByFieldName) {
             push(value)
