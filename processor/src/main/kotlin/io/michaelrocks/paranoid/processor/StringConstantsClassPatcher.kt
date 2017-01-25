@@ -34,8 +34,14 @@ class StringConstantsClassPatcher(
 
   private var isStaticInitializerPatched = false
 
-  override fun visit(version: Int, access: Int, name: String?, signature: String?, superName: String?,
-      interfaces: Array<out String>?) {
+  override fun visit(
+      version: Int,
+      access: Int,
+      name: String?,
+      signature: String?,
+      superName: String?,
+      interfaces: Array<out String>?
+  ) {
     super.visit(version, access, name, signature, superName, interfaces)
     isStaticInitializerPatched = configuration.constantStringsByFieldName.isEmpty()
   }
