@@ -37,7 +37,7 @@ class StringConstantsClassPatcher(
   override fun visit(
       version: Int,
       access: Int,
-      name: String?,
+      name: String,
       signature: String?,
       superName: String?,
       interfaces: Array<out String>?
