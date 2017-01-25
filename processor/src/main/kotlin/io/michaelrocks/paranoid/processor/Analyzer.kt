@@ -1,5 +1,5 @@
 /*
- * Copyright 2016 Michael Rozumyanskiy
+ * Copyright 2017 Michael Rozumyanskiy
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -31,8 +31,6 @@ import io.michaelrocks.grip.withFieldInitializer
 import io.michaelrocks.paranoid.Obfuscate
 import java.io.File
 
-private val OBFUSCATE_TYPE = getType<Obfuscate>()
-
 class Analyzer(private val grip: Grip) {
   fun analyze(inputPath: File): AnalysisResult {
     val typesToObfuscate = findTypesToObfuscate(inputPath)
@@ -61,5 +59,9 @@ class Analyzer(private val grip: Grip) {
     val mirror = grip.classRegistry.getClassMirror(type)
     val query = grip select fields from mirror where (isStatic() and isFinal() and withFieldInitializer<String>())
     return query.execute()[type].orEmpty()
+  }
+
+  companion object {
+    private val OBFUSCATE_TYPE = getType<Obfuscate>()
   }
 }

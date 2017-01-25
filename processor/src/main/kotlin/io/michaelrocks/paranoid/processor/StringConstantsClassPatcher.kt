@@ -27,9 +27,6 @@ import org.objectweb.asm.Type
 import org.objectweb.asm.commons.GeneratorAdapter
 import org.objectweb.asm.commons.Method
 
-private val STATIC_INITIALIZER_METHOD = Method("<clinit>", Type.VOID_TYPE, arrayOf())
-private val STRING_TYPE = Type.getType(String::class.java)
-
 class StringConstantsClassPatcher(
     private val configuration: ClassConfiguration,
     delegate: ClassVisitor
@@ -95,5 +92,10 @@ class StringConstantsClassPatcher(
     } else {
       return visitor
     }
+  }
+
+  companion object {
+    private val STATIC_INITIALIZER_METHOD = Method("<clinit>", Type.VOID_TYPE, arrayOf())
+    private val STRING_TYPE = Type.getType(String::class.java)
   }
 }
