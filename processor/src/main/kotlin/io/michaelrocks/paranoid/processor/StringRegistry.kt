@@ -1,5 +1,5 @@
 /*
- * Copyright 2016 Michael Rozumyanskiy
+ * Copyright 2017 Michael Rozumyanskiy
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -28,12 +28,6 @@ interface StringRegistry {
   fun getAllIds(): Collection<Int>
   fun getAllStrings(): Collection<String>
   fun findStringById(id: Int): String
-
-  data class Token(
-      val stringId: Int,
-      val deobfuscatorType: Type,
-      val deobfuscationMethod: Method
-  )
 }
 
 class StringRegistryImpl : StringRegistry {
