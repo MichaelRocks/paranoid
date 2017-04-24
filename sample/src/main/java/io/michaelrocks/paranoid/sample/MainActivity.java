@@ -23,8 +23,8 @@ import io.michaelrocks.paranoid.Obfuscate;
 
 @Obfuscate
 public class MainActivity extends AppCompatActivity {
-  private static final String QUESTION = "Q: %s";
-  private static final String ANSWER = "A: %s";
+  private static final String QUESTION = "Q:\r\n%s";
+  private static final String ANSWER = "A:\r\n%s";
 
   @Override
   protected void onCreate(final Bundle savedInstanceState) {
