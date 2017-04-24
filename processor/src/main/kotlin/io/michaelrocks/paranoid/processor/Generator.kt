@@ -58,9 +58,15 @@ class Generator(private val stringRegistry: StringRegistry) {
           logger.error(
               "Compilation error: {}:{}:{}: {}", it.source.name, it.lineNumber, it.columnNumber, it.getMessage(null))
         }
+
+        val message = diagnostics.diagnostics.joinToString(separator = "\n", prefix = "Compilation error:\n") {
+          "%s:%d:%d: %s".format(it.source.name, it.lineNumber, it.columnNumber, it.getMessage(null))
+        }
+        throw ParanoidException(message)
       }
     } catch (exception: Exception) {
       logger.error("Compilation error", exception)
+      throw ParanoidException("Compilation error", exception)
     }
   }
 
