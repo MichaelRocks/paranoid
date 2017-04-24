@@ -87,7 +87,7 @@ class Generator(private val stringRegistry: StringRegistry) {
       appendln()
       appendln("public class $className {")
       appendln("  private static final char[] chars = new char[] {")
-      indexesByChar.keys.joinTo(this, prefix = "    ", postfix = "\n") { "'\\u%04x'".format(it.toShort()) }
+      indexesByChar.keys.joinTo(this, prefix = "    ", postfix = "\n") { it.toLiteral() }
       appendln("  };")
       appendln("  private static final short[][] indexes = new short[][] {")
       strings
@@ -107,6 +107,15 @@ class Generator(private val stringRegistry: StringRegistry) {
       appendln("    return new String(stringChars);")
       appendln("  }")
       appendln("}")
+    }
+  }
+
+  // https://docs.oracle.com/javase/specs/jls/se8/html/jls-3.html#jls-3.10.4
+  private fun Char.toLiteral(): String {
+    return when (this) {
+      '\n' -> "'\\n'"
+      '\r' -> "'\\r'"
+      else -> "'\\u%04x'".format(toShort())
     }
   }
 }
