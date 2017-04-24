@@ -16,6 +16,7 @@
 
 package io.michaelrocks.paranoid.processor
 
+import io.michaelrocks.grip.ClassRegistry
 import io.michaelrocks.grip.mirrors.Type
 import io.michaelrocks.grip.mirrors.getObjectTypeByInternalName
 import io.michaelrocks.paranoid.processor.logging.getLogger
@@ -23,7 +24,10 @@ import org.objectweb.asm.ClassReader
 import org.objectweb.asm.ClassWriter
 import java.io.File
 
-class Patcher(private val stringRegistry: StringRegistry) {
+class Patcher(
+    private val stringRegistry: StringRegistry,
+    private val classRegistry: ClassRegistry
+) {
   private val logger = getLogger()
 
   fun copyAndPatchClasses(inputPath: File, outputPath: File, analysisResult: AnalysisResult) {
@@ -61,7 +65,7 @@ class Patcher(private val stringRegistry: StringRegistry) {
     logger.debug("  Source: {}", sourceFile)
     logger.debug("  Target: {}", targetFile)
     val reader = ClassReader(sourceFile.readBytes())
-    val writer = ClassWriter(reader, ClassWriter.COMPUTE_MAXS or ClassWriter.COMPUTE_FRAMES)
+    val writer = StandaloneClassWriter(reader, ClassWriter.COMPUTE_MAXS or ClassWriter.COMPUTE_FRAMES, classRegistry)
     val stringLiteralsPatcher = StringLiteralsClassPatcher(stringRegistry, writer)
     val stringConstantsPatcher = StringConstantsClassPatcher(configuration, stringLiteralsPatcher)
     reader.accept(stringConstantsPatcher, ClassReader.SKIP_FRAMES)
