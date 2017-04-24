@@ -35,7 +35,7 @@ class ParanoidProcessor(
   fun process() {
     val analysisResult = Analyzer(grip).analyze(inputPath)
     analysisResult.dump()
-    Patcher(stringRegistry).copyAndPatchClasses(inputPath, outputPath, analysisResult)
+    Patcher(stringRegistry, grip.classRegistry).copyAndPatchClasses(inputPath, outputPath, analysisResult)
     Generator(stringRegistry).generateDeobfuscator(sourcePath, outputPath, classpath, bootClasspath)
   }
 
