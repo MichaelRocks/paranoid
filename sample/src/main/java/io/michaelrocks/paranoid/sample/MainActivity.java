@@ -32,9 +32,9 @@ public class MainActivity extends AppCompatActivity {
     setContentView(R.layout.main_activity);
 
     final TextView questionTextView = (TextView) findViewById(R.id.questionTextView);
-    questionTextView.setText(String.format(QUESTION, "Does it work?"));
+    questionTextView.setText(String.format(QUESTION, "How does it work?"));
 
     final TextView answerTextView = (TextView) findViewById(R.id.answerTextView);
-    answerTextView.setText(String.format(ANSWER, "Sure it does!"));
+    answerTextView.setText(String.format(ANSWER, "It's magic! ¯\\_(ツ)_/¯"));
   }
 }
