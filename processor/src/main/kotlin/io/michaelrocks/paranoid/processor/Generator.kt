@@ -121,6 +121,8 @@ class Generator(private val stringRegistry: StringRegistry) {
     return when (this) {
       '\n' -> "'\\n'"
       '\r' -> "'\\r'"
+      '\'' -> "'\\''"
+      '\\' -> "'\\\\'"
       else -> "'\\u%04x'".format(toShort())
     }
   }
