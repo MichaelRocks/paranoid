@@ -16,27 +16,33 @@
 
 package io.michaelrocks.paranoid.processor
 
+import io.michaelrocks.grip.Grip
 import io.michaelrocks.grip.GripFactory
 import io.michaelrocks.paranoid.processor.logging.getLogger
 import java.io.File
 
 class ParanoidProcessor(
-    private val inputPath: File,
+    private val inputs: List<File>,
+    private val outputs: List<File>,
     private val sourcePath: File,
-    private val outputPath: File,
+    private val genPath: File,
     private val classpath: Collection<File>,
     private val bootClasspath: Collection<File>
 ) {
   private val logger = getLogger()
 
-  private val grip = GripFactory.create(listOf(inputPath) + classpath + bootClasspath)
+  private val grip: Grip = GripFactory.create(inputs + classpath + bootClasspath)
   private val stringRegistry = StringRegistryImpl()
 
   fun process() {
-    val analysisResult = Analyzer(grip).analyze(inputPath)
+    require(inputs.size == outputs.size) {
+      "Input collection $inputs and output collection $outputs have different sizes"
+    }
+
+    val analysisResult = Analyzer(grip).analyze(inputs)
     analysisResult.dump()
-    Patcher(stringRegistry, grip.classRegistry).copyAndPatchClasses(inputPath, outputPath, analysisResult)
-    Generator(stringRegistry).generateDeobfuscator(sourcePath, outputPath, classpath, bootClasspath)
+    Patcher(stringRegistry, grip.classRegistry).copyAndPatchClasses(inputs, outputs, analysisResult)
+    Generator(stringRegistry).generateDeobfuscator(sourcePath, genPath, outputs + classpath, bootClasspath)
   }
 
   private fun AnalysisResult.dump() {

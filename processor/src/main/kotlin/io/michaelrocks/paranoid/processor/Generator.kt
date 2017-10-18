@@ -1,5 +1,5 @@
 /*
- * Copyright 2016 Michael Rozumyanskiy
+ * Copyright 2017 Michael Rozumyanskiy
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -30,13 +30,16 @@ class Generator(private val stringRegistry: StringRegistry) {
 
   fun generateDeobfuscator(
       sourcePath: File,
-      outputPath: File,
+      genPath: File,
       classpath: Collection<File>,
       bootClasspath: Collection<File>
   ) {
     val sourceCode = generateDeobfuscatorSourceCode()
     val sourceFile = File(sourcePath, "${DEOBFUSCATOR_TYPE.internalName}.java")
+
     sourceFile.parentFile.mkdirs()
+    genPath.mkdirs()
+
     sourceFile.writeBytes(sourceCode.toByteArray())
 
     logger.info("Compiling {}", sourceFile)
@@ -46,8 +49,8 @@ class Generator(private val stringRegistry: StringRegistry) {
     val diagnostics = DiagnosticCollector<JavaFileObject>()
     val fileManager = compiler.getStandardFileManager(diagnostics, null, null)
     fileManager.setLocation(StandardLocation.SOURCE_PATH, listOf(sourcePath))
-    fileManager.setLocation(StandardLocation.CLASS_OUTPUT, listOf(outputPath))
-    fileManager.setLocation(StandardLocation.CLASS_PATH, classpath + listOf(outputPath))
+    fileManager.setLocation(StandardLocation.CLASS_OUTPUT, listOf(genPath))
+    fileManager.setLocation(StandardLocation.CLASS_PATH, classpath)
     fileManager.setLocation(StandardLocation.PLATFORM_CLASS_PATH, bootClasspath)
     val options = listOf("-g", "-source", "6", "-target", "6")
     val compilationUnits = fileManager.getJavaFileObjects(sourceFile)
@@ -56,7 +59,8 @@ class Generator(private val stringRegistry: StringRegistry) {
       if (!task.call()) {
         diagnostics.diagnostics.forEach {
           logger.error(
-              "Compilation error: {}:{}:{}: {}", it.source.name, it.lineNumber, it.columnNumber, it.getMessage(null))
+              "Compilation error: {}:{}:{}: {}", it.source.name, it.lineNumber, it.columnNumber, it.getMessage(null)
+          )
         }
 
         val message = diagnostics.diagnostics.joinToString(separator = "\n", prefix = "Compilation error:\n") {
@@ -71,7 +75,7 @@ class Generator(private val stringRegistry: StringRegistry) {
   }
 
   private fun generateDeobfuscatorSourceCode(): String {
-    val strings = stringRegistry.getAllStrings()
+    val strings = stringRegistry.getAllStrings().toList()
     val indexesByChar = strings
         .fold(HashSet<Char>()) { set, string ->
           string.forEach { set += it }
@@ -85,6 +89,23 @@ class Generator(private val stringRegistry: StringRegistry) {
             { it.index }
         )
 
+    val indexes = strings.joinToString(separator = "").map { indexesByChar[it] }
+    val offsets = strings.
+        foldIndexed(IntArray(strings.size + 1)) { index, offsets, string ->
+          offsets[index + 1] = offsets[index] + string.length
+          offsets
+        }
+
+    val charCount = indexesByChar.size
+    val indexCount = indexes.size
+    val stringCount = strings.size
+    val locationCount = stringCount * 2
+
+    val chunkSize = 1024
+    val charChunkCount = (charCount + chunkSize - 1) / chunkSize
+    val indexChunkCount = (indexCount + chunkSize - 1) / chunkSize
+    val locationChunkCount = (stringCount + chunkSize - 1) / chunkSize
+
     return buildString {
       val internalName = DEOBFUSCATOR_TYPE.internalName
       val packageName = internalName.substringBeforeLast('/').replace('/', '.')
@@ -92,27 +113,80 @@ class Generator(private val stringRegistry: StringRegistry) {
       appendln("package $packageName;")
       appendln()
       appendln("public class $className {")
-      appendln("  private static final char[] chars = new char[] {")
-      indexesByChar.keys.joinTo(this, prefix = "    ", postfix = "\n") { it.toLiteral() }
-      appendln("  };")
-      appendln("  private static final short[][] indexes = new short[][] {")
-      strings
-          .map { string ->
-            string.toCharArray()
-                .map { char -> indexesByChar[char] }
-                .joinToString(prefix = "    { ", postfix = " }")
-          }
-          .joinTo(this, separator = ",\n", postfix = "\n")
-      appendln("  };")
+      appendln("  private static final char[] chars = new char[$charCount];")
+      appendln("  private static final short[] indexes = new short[$indexCount];")
+      appendln("  private static final int[] locations = new int[$locationCount];")
+      appendln()
+      appendln("  static {")
+      repeat(charChunkCount) { chunkIndex ->
+        appendln("    fillChars$chunkIndex();")
+      }
+      repeat(indexChunkCount) { chunkIndex ->
+        appendln("    fillIndexes$chunkIndex();")
+      }
+      repeat(locationChunkCount) { chunkIndex ->
+        appendln("    fillLocations$chunkIndex();")
+      }
+      appendln("  }")
+
+      val charsWithIndexes = indexesByChar.entries.toList()
+      repeat(charChunkCount) { chunkIndex ->
+        appendln()
+        appendln("  public static void fillChars$chunkIndex() {")
+        appendln("    final char[] array = chars;")
+        forEachInChunk(chunkIndex, chunkSize, charCount) { entryIndex ->
+          val (char, index) = charsWithIndexes[entryIndex]
+          val literal = char.toLiteral()
+          appendln("    array[$index] = $literal;")
+        }
+        appendln("  }")
+      }
+
+      repeat(indexChunkCount) { chunkIndex ->
+        appendln()
+        appendln("  public static void fillIndexes$chunkIndex() {")
+        appendln("    final short[] array = indexes;")
+        forEachInChunk(chunkIndex, chunkSize, indexCount) { indexIndex ->
+          val index = indexes[indexIndex]
+          appendln("    array[$indexIndex] = $index;")
+        }
+        appendln("  }")
+      }
+
+      repeat(locationChunkCount) { chunkIndex ->
+        appendln()
+        appendln("  public static void fillLocations$chunkIndex() {")
+        appendln("    final int[] array = locations;")
+        forEachInChunk(chunkIndex, chunkSize, stringCount) { locationIndex ->
+          val offset = offsets[locationIndex]
+          val length = strings[locationIndex].length
+          val offsetIndex = locationIndex * 2
+          val lengthIndex = offsetIndex + 1
+          appendln("    array[$offsetIndex] = $offset;")
+          appendln("    array[$lengthIndex] = $length;")
+        }
+        appendln("  }")
+      }
+
+      appendln()
       appendln("  public static String ${DEOBFUSCATION_METHOD.name}(final int id) {")
-      appendln("    final short[] stringIndexes = indexes[id];")
-      appendln("    final char[] stringChars = new char[stringIndexes.length];")
-      appendln("    for (int i = 0; i < stringIndexes.length; ++i) {")
-      appendln("      stringChars[i] = chars[stringIndexes[i]];")
+      appendln("    final int offset = locations[id * 2];")
+      appendln("    final int length = locations[id * 2 + 1];")
+      appendln("    final char[] stringChars = new char[length];")
+      appendln("    for (int i = 0; i < length; ++i) {")
+      appendln("      stringChars[i] = chars[indexes[offset + i]];")
       appendln("    }")
       appendln("    return new String(stringChars);")
       appendln("  }")
       appendln("}")
+    }
+  }
+
+  private inline fun forEachInChunk(chunkIndex: Int, chunkSize: Int, totalSize: Int, action: (Int) -> Unit) {
+    val chunkIndexStart = chunkIndex * chunkSize
+    val chunkIndexEnd = minOf((chunkIndex + 1) * chunkSize, totalSize)
+    for (indexInChunk in chunkIndexStart until chunkIndexEnd) {
+      action(indexInChunk)
     }
   }
 

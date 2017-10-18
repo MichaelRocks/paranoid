@@ -32,8 +32,8 @@ import io.michaelrocks.paranoid.Obfuscate
 import java.io.File
 
 class Analyzer(private val grip: Grip) {
-  fun analyze(inputPath: File): AnalysisResult {
-    val typesToObfuscate = findTypesToObfuscate(inputPath)
+  fun analyze(inputs: List<File>): AnalysisResult {
+    val typesToObfuscate = findTypesToObfuscate(inputs)
     val obfuscationConfigurationsByType = typesToObfuscate.associateBy(
         { it },
         { createObfuscationConfiguration(it) }
@@ -41,8 +41,8 @@ class Analyzer(private val grip: Grip) {
     return AnalysisResult(obfuscationConfigurationsByType)
   }
 
-  private fun findTypesToObfuscate(path: File): Set<Type.Object> {
-    val query = grip select classes from path where annotatedWith(OBFUSCATE_TYPE)
+  private fun findTypesToObfuscate(inputs: List<File>): Set<Type.Object> {
+    val query = grip select classes from inputs where annotatedWith(OBFUSCATE_TYPE)
     return query.execute().types.toHashSet()
   }
 
