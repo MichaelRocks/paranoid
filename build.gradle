@@ -1,16 +1,18 @@
 allprojects {
-  ext.kotlinVersion = '1.1.2'
+  ext.kotlinVersion = '1.1.51'
 
   buildscript {
     repositories {
       mavenLocal()
       jcenter()
+      google()
     }
   }
 
   repositories {
     mavenLocal()
     jcenter()
+    google()
   }
 }
 
@@ -31,11 +33,11 @@ allprojects {
 
 ext {
   asmVersion = '5.2'
-  gripVersion = '0.5.1-beta'
-  logbackVersion = '1.2.2'
+  gripVersion = '0.5.3-beta'
+  logbackVersion = '1.2.3'
 
   junitVersion = '4.12'
 
-  androidToolsVersion = '2.3.1'
-  supportVersion = '25.3.1'
+  androidToolsVersion = '3.0.0-rc1'
+  supportVersion = '26.1.0'
 }
