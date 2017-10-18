@@ -5,12 +5,14 @@ allprojects {
     repositories {
       mavenLocal()
       jcenter()
+      google()
     }
   }
 
   repositories {
     mavenLocal()
     jcenter()
+    google()
   }
 }
 
@@ -36,6 +38,6 @@ ext {
 
   junitVersion = '4.12'
 
-  androidToolsVersion = '2.3.1'
-  supportVersion = '25.3.1'
+  androidToolsVersion = '3.0.0-rc1'
+  supportVersion = '26.1.0'
 }

@@ -10,13 +10,13 @@ apply plugin: 'com.android.application'
 apply plugin: 'io.michaelrocks.paranoid'
 
 android {
-  compileSdkVersion 25
-  buildToolsVersion "25.0.2"
+  compileSdkVersion 26
+  buildToolsVersion "26.0.2"
 
   defaultConfig {
     applicationId "io.michaelrocks.paranoid.sample"
     minSdkVersion 16
-    targetSdkVersion 25
+    targetSdkVersion 26
     versionCode 1
     versionName "1.0"
   }
@@ -45,5 +45,5 @@ android {
 }
 
 dependencies {
-  compile "com.android.support:appcompat-v7:$supportVersion"
+  implementation "com.android.support:appcompat-v7:$supportVersion"
 }

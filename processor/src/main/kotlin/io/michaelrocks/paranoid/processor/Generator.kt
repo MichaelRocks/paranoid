@@ -30,13 +30,16 @@ class Generator(private val stringRegistry: StringRegistry) {
 
   fun generateDeobfuscator(
       sourcePath: File,
-      outputPath: File,
+      genPath: File,
       classpath: Collection<File>,
       bootClasspath: Collection<File>
   ) {
     val sourceCode = generateDeobfuscatorSourceCode()
     val sourceFile = File(sourcePath, "${DEOBFUSCATOR_TYPE.internalName}.java")
+
     sourceFile.parentFile.mkdirs()
+    genPath.mkdirs()
+
     sourceFile.writeBytes(sourceCode.toByteArray())
 
     logger.info("Compiling {}", sourceFile)
@@ -46,8 +49,8 @@ class Generator(private val stringRegistry: StringRegistry) {
     val diagnostics = DiagnosticCollector<JavaFileObject>()
     val fileManager = compiler.getStandardFileManager(diagnostics, null, null)
     fileManager.setLocation(StandardLocation.SOURCE_PATH, listOf(sourcePath))
-    fileManager.setLocation(StandardLocation.CLASS_OUTPUT, listOf(outputPath))
-    fileManager.setLocation(StandardLocation.CLASS_PATH, classpath + listOf(outputPath))
+    fileManager.setLocation(StandardLocation.CLASS_OUTPUT, listOf(genPath))
+    fileManager.setLocation(StandardLocation.CLASS_PATH, classpath)
     fileManager.setLocation(StandardLocation.PLATFORM_CLASS_PATH, bootClasspath)
     val options = listOf("-g", "-source", "6", "-target", "6")
     val compilationUnits = fileManager.getJavaFileObjects(sourceFile)

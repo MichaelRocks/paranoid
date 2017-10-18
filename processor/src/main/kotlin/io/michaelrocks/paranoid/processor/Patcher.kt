@@ -30,10 +30,17 @@ class Patcher(
 ) {
   private val logger = getLogger()
 
-  fun copyAndPatchClasses(inputPath: File, outputPath: File, analysisResult: AnalysisResult) {
+  fun copyAndPatchClasses(inputs: List<File>, outputs: List<File>, analysisResult: AnalysisResult) {
+    for (index in inputs.indices) {
+      copyAndPatchClasses(inputs[index], outputs[index], analysisResult)
+    }
+  }
+
+  private fun copyAndPatchClasses(inputPath: File, outputPath: File, analysisResult: AnalysisResult) {
     logger.info("Patching...")
     logger.info("   Input: {}", inputPath)
     logger.info("  Output: {}", outputPath)
+    // FIXME: Support JARs here.
     for (sourceFile in inputPath.walk()) {
       val relativePath = sourceFile.toRelativeString(inputPath)
       val targetFile = File(outputPath, relativePath)
