@@ -4,15 +4,15 @@ allprojects {
   buildscript {
     repositories {
       mavenLocal()
-      jcenter()
       google()
+      jcenter()
     }
   }
 
   repositories {
     mavenLocal()
-    jcenter()
     google()
+    jcenter()
   }
 }
 
