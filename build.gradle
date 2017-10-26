@@ -4,15 +4,15 @@ allprojects {
   buildscript {
     repositories {
       mavenLocal()
-      jcenter()
       google()
+      jcenter()
     }
   }
 
   repositories {
     mavenLocal()
-    jcenter()
     google()
+    jcenter()
   }
 }
 
@@ -38,6 +38,6 @@ ext {
 
   junitVersion = '4.12'
 
-  androidToolsVersion = '3.0.0-rc1'
-  supportVersion = '26.1.0'
+  androidToolsVersion = '3.0.0'
+  supportVersion = '27.0.0'
 }
