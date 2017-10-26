@@ -81,6 +81,7 @@ class ParanoidTransform(private val android: BaseExtension) : Transform() {
       return EnumSet.of(
           QualifiedContent.Scope.PROJECT,
           QualifiedContent.Scope.SUB_PROJECTS,
+          QualifiedContent.Scope.EXTERNAL_LIBRARIES,
           QualifiedContent.Scope.PROVIDED_ONLY
       )
     } else {
