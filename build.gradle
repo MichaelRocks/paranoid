@@ -38,6 +38,6 @@ ext {
 
   junitVersion = '4.12'
 
-  androidToolsVersion = '3.0.0-rc1'
+  androidToolsVersion = '3.0.0'
   supportVersion = '26.1.0'
 }
