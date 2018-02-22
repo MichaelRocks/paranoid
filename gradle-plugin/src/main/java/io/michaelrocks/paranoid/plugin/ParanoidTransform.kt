@@ -1,5 +1,5 @@
 /*
- * Copyright 2017 Michael Rozumyanskiy
+ * Copyright 2018 Michael Rozumyanskiy
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -54,7 +54,8 @@ class ParanoidTransform(private val android: BaseExtension) : Transform() {
         classpath = invocation.referencedInputs.flatMap {
           it.jarInputs.map { it.file } + it.directoryInputs.map { it.file }
         },
-        bootClasspath = android.bootClasspath
+        bootClasspath = android.bootClasspath,
+        projectName = invocation.context.path.replace(":transformClassesWithParanoidFor", ":").replace(':', '$')
     )
 
     try {
@@ -98,6 +99,10 @@ class ParanoidTransform(private val android: BaseExtension) : Transform() {
 
   override fun isIncremental(): Boolean {
     return false
+  }
+
+  override fun getParameterInputs(): MutableMap<String, Any> {
+    return mutableMapOf("version" to Build.VERSION)
   }
 
   private fun TransformOutputProvider.getContentLocation(

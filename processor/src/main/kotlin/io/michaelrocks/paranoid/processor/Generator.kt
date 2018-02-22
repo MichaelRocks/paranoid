@@ -1,5 +1,5 @@
 /*
- * Copyright 2017 Michael Rozumyanskiy
+ * Copyright 2018 Michael Rozumyanskiy
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -17,6 +17,7 @@
 package io.michaelrocks.paranoid.processor
 
 import io.michaelrocks.paranoid.processor.logging.getLogger
+import io.michaelrocks.paranoid.processor.model.Deobfuscator
 import java.io.File
 import java.util.Collections
 import java.util.HashSet
@@ -25,7 +26,10 @@ import javax.tools.JavaFileObject
 import javax.tools.StandardLocation
 import javax.tools.ToolProvider
 
-class Generator(private val stringRegistry: StringRegistry) {
+class Generator(
+    private val deobfuscator: Deobfuscator,
+    private val stringRegistry: StringRegistry
+) {
   private val logger = getLogger()
 
   fun generateDeobfuscator(
@@ -35,7 +39,7 @@ class Generator(private val stringRegistry: StringRegistry) {
       bootClasspath: Collection<File>
   ) {
     val sourceCode = generateDeobfuscatorSourceCode()
-    val sourceFile = File(sourcePath, "${DEOBFUSCATOR_TYPE.internalName}.java")
+    val sourceFile = File(sourcePath, "${deobfuscator.type.internalName}.java")
 
     sourceFile.parentFile.mkdirs()
     genPath.mkdirs()
@@ -107,7 +111,7 @@ class Generator(private val stringRegistry: StringRegistry) {
     val locationChunkCount = (stringCount + chunkSize - 1) / chunkSize
 
     return buildString {
-      val internalName = DEOBFUSCATOR_TYPE.internalName
+      val internalName = deobfuscator.type.internalName
       val packageName = internalName.substringBeforeLast('/').replace('/', '.')
       val className = internalName.substringAfterLast('/')
       appendln("package $packageName;")
@@ -169,7 +173,7 @@ class Generator(private val stringRegistry: StringRegistry) {
       }
 
       appendln()
-      appendln("  public static String ${DEOBFUSCATION_METHOD.name}(final int id) {")
+      appendln("  public static String ${deobfuscator.deobfuscationMethod.name}(final int id) {")
       appendln("    final int offset = locations[id * 2];")
       appendln("    final int length = locations[id * 2 + 1];")
       appendln("    final char[] stringChars = new char[length];")

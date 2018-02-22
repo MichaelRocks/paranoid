@@ -1,5 +1,5 @@
 /*
- * Copyright 2017 Michael Rozumyanskiy
+ * Copyright 2018 Michael Rozumyanskiy
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,12 +16,7 @@
 
 package io.michaelrocks.paranoid.processor
 
-import org.objectweb.asm.Type
-import org.objectweb.asm.commons.Method
 import java.util.HashMap
-
-val DEOBFUSCATOR_TYPE = Type.getObjectType("io/michaelrocks/paranoid/Deobfuscator")
-val DEOBFUSCATION_METHOD: Method = Method("getString", Type.getType(String::class.java), arrayOf(Type.INT_TYPE))
 
 interface StringRegistry {
   fun registerString(string: String): Int
