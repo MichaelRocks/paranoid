@@ -1,5 +1,5 @@
 /*
- * Copyright 2017 Michael Rozumyanskiy
+ * Copyright 2018 Michael Rozumyanskiy
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -18,7 +18,11 @@ package io.michaelrocks.paranoid.processor
 
 import io.michaelrocks.grip.Grip
 import io.michaelrocks.grip.GripFactory
+import io.michaelrocks.grip.mirrors.getObjectTypeByInternalName
 import io.michaelrocks.paranoid.processor.logging.getLogger
+import io.michaelrocks.paranoid.processor.model.Deobfuscator
+import org.objectweb.asm.Type
+import org.objectweb.asm.commons.Method
 import java.io.File
 
 class ParanoidProcessor(
@@ -27,7 +31,8 @@ class ParanoidProcessor(
     private val sourcePath: File,
     private val genPath: File,
     private val classpath: Collection<File>,
-    private val bootClasspath: Collection<File>
+    private val bootClasspath: Collection<File>,
+    private val projectName: String
 ) {
   private val logger = getLogger()
 
@@ -41,8 +46,11 @@ class ParanoidProcessor(
 
     val analysisResult = Analyzer(grip).analyze(inputs)
     analysisResult.dump()
-    Patcher(stringRegistry, grip.classRegistry).copyAndPatchClasses(inputs, outputs, analysisResult)
-    Generator(stringRegistry).generateDeobfuscator(sourcePath, genPath, outputs + classpath, bootClasspath)
+
+    val deobfuscator = createDeobfuscator()
+    logger.info("Prepare to generate {}", deobfuscator)
+    Patcher(deobfuscator, stringRegistry, grip.classRegistry).copyAndPatchClasses(inputs, outputs, analysisResult)
+    Generator(deobfuscator, stringRegistry).generateDeobfuscator(sourcePath, genPath, outputs + classpath, bootClasspath)
   }
 
   private fun AnalysisResult.dump() {
@@ -58,6 +66,22 @@ class ParanoidProcessor(
           logger.info("    {} = \"{}\"", field, string)
         }
       }
+    }
+  }
+
+  private fun createDeobfuscator(): Deobfuscator {
+    val deobfuscatorInternalName = "io/michaelrocks/paranoid/Deobfuscator${composeDeobfuscatorNameSuffix()}"
+    val deobfuscatorType = getObjectTypeByInternalName(deobfuscatorInternalName)
+    val deobfuscationMethod = Method("getString", Type.getType(String::class.java), arrayOf(Type.INT_TYPE))
+    return Deobfuscator(deobfuscatorType, deobfuscationMethod)
+  }
+
+  private fun composeDeobfuscatorNameSuffix(): String {
+    val normalizedProjectName = projectName.filter { it.isLetterOrDigit() || it == '_' || it == '$' }
+    return if (normalizedProjectName.isEmpty() || normalizedProjectName.startsWith('$')) {
+      normalizedProjectName
+    } else {
+      '$' + normalizedProjectName
     }
   }
 }
