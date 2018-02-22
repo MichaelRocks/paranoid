@@ -1,5 +1,5 @@
 /*
- * Copyright 2016 Michael Rozumyanskiy
+ * Copyright 2018 Michael Rozumyanskiy
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -19,6 +19,7 @@ package io.michaelrocks.paranoid.sample;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.widget.TextView;
+
 import io.michaelrocks.paranoid.Obfuscate;
 
 @Obfuscate
@@ -31,10 +32,10 @@ public class MainActivity extends AppCompatActivity {
     super.onCreate(savedInstanceState);
     setContentView(R.layout.main_activity);
 
-    final TextView questionTextView = (TextView) findViewById(R.id.questionTextView);
+    final TextView questionTextView = findViewById(R.id.questionTextView);
     questionTextView.setText(String.format(QUESTION, "How does it work?"));
 
-    final TextView answerTextView = (TextView) findViewById(R.id.answerTextView);
+    final TextView answerTextView = findViewById(R.id.answerTextView);
     answerTextView.setText(String.format(ANSWER, "It's magic! ¯\\_(ツ)_/¯"));
   }
 }
