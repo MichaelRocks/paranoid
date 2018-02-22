@@ -100,6 +100,10 @@ class ParanoidTransform(private val android: BaseExtension) : Transform() {
     return false
   }
 
+  override fun getParameterInputs(): MutableMap<String, Any> {
+    return mutableMapOf("version" to Build.VERSION)
+  }
+
   private fun TransformOutputProvider.getContentLocation(
       name: String,
       contentType: QualifiedContent.ContentType,
