@@ -19,6 +19,8 @@ android {
     targetSdkVersion 27
     versionCode 1
     versionName "1.0"
+
+    testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
   }
 
   signingConfigs {
@@ -32,7 +34,7 @@ android {
 
   buildTypes {
     debug {
-      minifyEnabled true
+      minifyEnabled false
       proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
     }
 
@@ -46,4 +48,9 @@ android {
 
 dependencies {
   implementation "com.android.support:appcompat-v7:$supportVersion"
+
+  testImplementation "junit:junit:$junitVersion"
+
+  androidTestImplementation "com.android.support.test:runner:$runnerVersion"
+  androidTestImplementation "com.android.support.test.espresso:espresso-core:$espressoVersion"
 }
