@@ -1,5 +1,5 @@
 /*
- * Copyright 2017 Michael Rozumyanskiy
+ * Copyright 2018 Michael Rozumyanskiy
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -20,11 +20,13 @@ import io.michaelrocks.grip.ClassRegistry
 import io.michaelrocks.grip.mirrors.Type
 import io.michaelrocks.grip.mirrors.getObjectTypeByInternalName
 import io.michaelrocks.paranoid.processor.logging.getLogger
+import io.michaelrocks.paranoid.processor.model.Deobfuscator
 import org.objectweb.asm.ClassReader
 import org.objectweb.asm.ClassWriter
 import java.io.File
 
 class Patcher(
+    private val deobfuscator: Deobfuscator,
     private val stringRegistry: StringRegistry,
     private val classRegistry: ClassRegistry
 ) {
@@ -73,7 +75,7 @@ class Patcher(
     logger.debug("  Target: {}", targetFile)
     val reader = ClassReader(sourceFile.readBytes())
     val writer = StandaloneClassWriter(reader, ClassWriter.COMPUTE_MAXS or ClassWriter.COMPUTE_FRAMES, classRegistry)
-    val stringLiteralsPatcher = StringLiteralsClassPatcher(stringRegistry, writer)
+    val stringLiteralsPatcher = StringLiteralsClassPatcher(deobfuscator, stringRegistry, writer)
     val stringConstantsPatcher = StringConstantsClassPatcher(configuration, stringLiteralsPatcher)
     reader.accept(stringConstantsPatcher, ClassReader.SKIP_FRAMES)
     targetFile.parentFile.mkdirs()
