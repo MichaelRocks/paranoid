@@ -15,7 +15,7 @@ dependencies {
   compile gradleApi()
   compile project(':processor')
 
-  compile "org.jetbrains.kotlin:kotlin-stdlib-jre8:$kotlinVersion"
+  compile "org.jetbrains.kotlin:kotlin-stdlib-jdk8:$kotlinVersion"
 
   compileOnly "com.android.tools.build:gradle:$androidToolsVersion"
   compileOnly "com.android.tools.build:gradle-api:$androidToolsVersion"
