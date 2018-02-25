@@ -42,5 +42,7 @@ public class MainActivityTest {
         .check(matches(withText("Q:\r\nHow does it work?")));
     onView(withId(R.id.answerTextView))
         .check(matches(withText("A:\r\nIt's magic! ¯\\_(ツ)_/¯")));
+    onView(withId(R.id.showDialogButton))
+        .check(matches(withText("Show dialog")));
   }
 }

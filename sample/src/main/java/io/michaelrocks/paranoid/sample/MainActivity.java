@@ -16,9 +16,14 @@
 
 package io.michaelrocks.paranoid.sample;
 
+import android.app.AlertDialog;
+import android.content.DialogInterface;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
+import android.view.View;
+import android.widget.Button;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import io.michaelrocks.paranoid.Obfuscate;
 
@@ -37,5 +42,25 @@ public class MainActivity extends AppCompatActivity {
 
     final TextView answerTextView = findViewById(R.id.answerTextView);
     answerTextView.setText(String.format(ANSWER, "It's magic! ¯\\_(ツ)_/¯"));
+
+    final Button showDialogButton = findViewById(R.id.showDialogButton);
+    showDialogButton.setText("Show dialog");
+    showDialogButton.setOnClickListener(new View.OnClickListener() {
+      @Override
+      public void onClick(final View view) {
+        Toast.makeText(MainActivity.this, "Button clicked", Toast.LENGTH_SHORT).show();
+        new AlertDialog.Builder(MainActivity.this)
+            .setTitle("Title")
+            .setMessage("Message 2")
+            .setPositiveButton("Close", new DialogInterface.OnClickListener() {
+              @Override
+              public void onClick(final DialogInterface dialog, final int which) {
+                Toast.makeText(MainActivity.this, "Dialog dismissed", Toast.LENGTH_SHORT).show();
+                dialog.dismiss();
+              }
+            })
+            .show();
+      }
+    });
   }
 }
