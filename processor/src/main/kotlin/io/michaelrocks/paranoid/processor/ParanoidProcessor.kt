@@ -49,7 +49,7 @@ class ParanoidProcessor(
 
     val deobfuscator = createDeobfuscator()
     logger.info("Prepare to generate {}", deobfuscator)
-    Patcher(deobfuscator, stringRegistry, grip.classRegistry).copyAndPatchClasses(inputs, outputs, analysisResult)
+    Patcher(deobfuscator, stringRegistry, analysisResult, grip.classRegistry).copyAndPatchClasses(inputs, outputs)
     Generator(deobfuscator, stringRegistry).generateDeobfuscator(sourcePath, genPath, outputs + classpath, bootClasspath)
   }
 

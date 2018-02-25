@@ -22,23 +22,25 @@ import io.michaelrocks.grip.mirrors.getObjectTypeByInternalName
 import io.michaelrocks.paranoid.processor.logging.getLogger
 import io.michaelrocks.paranoid.processor.model.Deobfuscator
 import org.objectweb.asm.ClassReader
+import org.objectweb.asm.ClassVisitor
 import org.objectweb.asm.ClassWriter
 import java.io.File
 
 class Patcher(
     private val deobfuscator: Deobfuscator,
     private val stringRegistry: StringRegistry,
+    private val analysisResult: AnalysisResult,
     private val classRegistry: ClassRegistry
 ) {
   private val logger = getLogger()
 
-  fun copyAndPatchClasses(inputs: List<File>, outputs: List<File>, analysisResult: AnalysisResult) {
+  fun copyAndPatchClasses(inputs: List<File>, outputs: List<File>) {
     for (index in inputs.indices) {
-      copyAndPatchClasses(inputs[index], outputs[index], analysisResult)
+      copyAndPatchClasses(inputs[index], outputs[index])
     }
   }
 
-  private fun copyAndPatchClasses(inputPath: File, outputPath: File, analysisResult: AnalysisResult) {
+  private fun copyAndPatchClasses(inputPath: File, outputPath: File) {
     logger.info("Patching...")
     logger.info("   Input: {}", inputPath)
     logger.info("  Output: {}", outputPath)
@@ -47,13 +49,8 @@ class Patcher(
       val relativePath = sourceFile.toRelativeString(inputPath)
       val targetFile = File(outputPath, relativePath)
       if (sourceFile.isFile) {
-        val type = getObjectTypeFromFile(relativePath)
-        val configuration = analysisResult.configurationsByType[type]
-        if (configuration != null) {
-          patchClass(sourceFile, targetFile, analysisResult.configurationsByType[type]!!)
-        } else {
-          sourceFile.parentFile.mkdirs()
-          sourceFile.copyTo(targetFile, true)
+        getObjectTypeFromFile(relativePath)?.let { type ->
+          copyAndPatchClass(sourceFile, targetFile, type)
         }
       } else {
         targetFile.mkdirs()
@@ -69,16 +66,37 @@ class Patcher(
     return null
   }
 
-  private fun patchClass(sourceFile: File, targetFile: File, configuration: ClassConfiguration) {
+  private fun copyAndPatchClass(sourceFile: File, targetFile: File, type: Type.Object) {
+    if (!maybePatchClass(sourceFile, targetFile, type)) {
+      sourceFile.parentFile.mkdirs()
+      sourceFile.copyTo(targetFile, true)
+    }
+  }
+
+  private fun maybePatchClass(sourceFile: File, targetFile: File, type: Type.Object): Boolean {
+    val configuration = analysisResult.configurationsByType[type]
+    val hasObfuscateAnnotation = OBFUSCATE_TYPE in classRegistry.getClassMirror(type).annotations
+    if (configuration == null && !hasObfuscateAnnotation) {
+      return false
+    }
+
     logger.debug("Patching class...")
     logger.debug("  Source: {}", sourceFile)
     logger.debug("  Target: {}", targetFile)
     val reader = ClassReader(sourceFile.readBytes())
     val writer = StandaloneClassWriter(reader, ClassWriter.COMPUTE_MAXS or ClassWriter.COMPUTE_FRAMES, classRegistry)
-    val stringLiteralsPatcher = StringLiteralsClassPatcher(deobfuscator, stringRegistry, writer)
-    val stringConstantsPatcher = StringConstantsClassPatcher(configuration, stringLiteralsPatcher)
-    reader.accept(stringConstantsPatcher, ClassReader.SKIP_FRAMES)
+    val patcher =
+        writer
+            .wrapIf(hasObfuscateAnnotation) { RemoveObfuscateClassPatcher(it) }
+            .wrapIf(configuration != null) { StringLiteralsClassPatcher(deobfuscator, stringRegistry, it) }
+            .wrapIf(configuration != null) { StringConstantsClassPatcher(configuration!!, it) }
+    reader.accept(patcher, ClassReader.SKIP_FRAMES)
     targetFile.parentFile.mkdirs()
     targetFile.writeBytes(writer.toByteArray())
+    return true
+  }
+
+  private inline fun ClassVisitor.wrapIf(condition: Boolean, wrapper: (ClassVisitor) -> ClassVisitor): ClassVisitor {
+    return if (condition) wrapper(this) else this
   }
 }
