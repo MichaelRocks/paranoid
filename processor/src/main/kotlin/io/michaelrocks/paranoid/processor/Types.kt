@@ -16,18 +16,7 @@
 
 package io.michaelrocks.paranoid.processor
 
-import io.michaelrocks.grip.ClassRegistry
-import io.michaelrocks.grip.mirrors.Type
+import io.michaelrocks.grip.mirrors.getObjectType
+import io.michaelrocks.paranoid.Obfuscate
 
-class ObfuscatedTypeRegistryImpl(
-    private val classRegistry: ClassRegistry
-) : ObfuscatedTypeRegistry {
-  override fun shouldObfuscate(type: Type.Object): Boolean {
-    val mirror = classRegistry.getClassMirror(type)
-    if (OBFUSCATE_TYPE in mirror.annotations) {
-      return true
-    }
-
-    return mirror.enclosingType?.let { shouldObfuscate(it) } ?: false
-  }
-}
+val OBFUSCATE_TYPE = getObjectType<Obfuscate>()
