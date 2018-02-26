@@ -23,6 +23,9 @@ cache:
     - $HOME/.gradle/caches/
     - $HOME/.gradle/wrapper/
 
+before_install:
+  - yes | sdkmanager "platforms;android-27"
+
 install:
   - ./gradlew assemble publishToMavenLocal -Pbootstrap=true --no-daemon --rerun-tasks
 
