@@ -43,7 +43,6 @@ task generateBuildClass {
 
 sourceSets {
   main {
-    output.dir(builtBy: tasks.generateBuildClass, generatedJavaSourcesDir)
     java.srcDirs += generatedJavaSourcesDir
   }
 }
