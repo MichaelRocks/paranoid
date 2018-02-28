@@ -1,5 +1,6 @@
 allprojects {
   ext.kotlinVersion = '1.2.21'
+  ext.shadowVersion = '2.0.2'
 
   ext.asmVersion = '6.0'
   ext.gripVersion = '0.6.0-beta'
