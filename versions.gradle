@@ -1,0 +1,16 @@
+ext.kotlinVersion = '1.2.31'
+ext.shadowVersion = '2.0.2'
+ext.bintrayVersion = '1.7.3'
+
+ext.asmVersion = '6.0'
+ext.gripVersion = '0.6.0-beta'
+ext.logbackVersion = '1.2.3'
+ext.mavenVersion = '3.5.3'
+
+ext.junitVersion = '4.12'
+
+ext.androidToolsVersion = '3.0.1'
+ext.supportVersion = '27.1.0'
+
+ext.runnerVersion = '1.0.1'
+ext.espressoVersion = '3.0.1'

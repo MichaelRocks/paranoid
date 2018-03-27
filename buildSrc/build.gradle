@@ -1,7 +1,25 @@
+buildscript {
+  apply from: '../versions.gradle'
+
+  repositories {
+    jcenter()
+  }
+
+  dependencies {
+    classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlinVersion"
+  }
+}
+
+apply plugin: 'kotlin'
+
 repositories {
-  maven { url "https://plugins.gradle.org/m2/" }
+  jcenter()
+  gradlePluginPortal()
 }
 
 dependencies {
-  compile "com.jfrog.bintray.gradle:gradle-bintray-plugin:1.6"
+  compile "org.jetbrains.kotlin:kotlin-stdlib:$kotlinVersion"
+  compile "com.github.jengelman.gradle.plugins:shadow:$shadowVersion"
+  compile "com.jfrog.bintray.gradle:gradle-bintray-plugin:$bintrayVersion"
+  compile "org.apache.maven:maven:$mavenVersion"
 }
