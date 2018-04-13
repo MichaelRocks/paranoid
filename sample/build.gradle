@@ -7,6 +7,7 @@ buildscript {
 }
 
 apply plugin: 'com.android.application'
+apply plugin: "kotlin-android"
 apply plugin: 'io.michaelrocks.paranoid'
 
 android {
@@ -47,6 +48,7 @@ android {
 }
 
 dependencies {
+  implementation "org.jetbrains.kotlin:kotlin-stdlib:$kotlinVersion"
   implementation "com.android.support:appcompat-v7:$supportVersion"
 
   testImplementation "junit:junit:$junitVersion"
