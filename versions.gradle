@@ -9,7 +9,7 @@ ext.mavenVersion = '3.5.3'
 
 ext.junitVersion = '4.12'
 
-ext.androidToolsVersion = '3.0.1'
+ext.androidToolsVersion = '3.1.1'
 ext.supportVersion = '27.1.0'
 
 ext.runnerVersion = '1.0.1'
