@@ -4,9 +4,8 @@ buildscript {
   }
 }
 
-apply plugin: 'java'
 apply plugin: 'kotlin'
-apply plugin: 'io.michaelrocks.publish'
+apply plugin: 'io.michaelrocks.pablo'
 
 sourceCompatibility = JavaVersion.VERSION_1_6
 targetCompatibility = JavaVersion.VERSION_1_6
@@ -28,8 +27,6 @@ jar {
 }
 
 shadowJar {
-  classifier = ''
-
   relocate 'io.michaelrocks.paranoid', 'io.michaelrocks.paranoid'
   relocate 'io.michaelrocks.grip', 'io.michaelrocks.paranoid.grip'
   relocate 'org.objectweb.asm', 'io.michaelrocks.paranoid.asm'

@@ -1,5 +1,5 @@
 apply plugin: 'java'
-apply plugin: 'io.michaelrocks.publish'
+apply plugin: 'io.michaelrocks.pablo'
 
 sourceCompatibility = JavaVersion.VERSION_1_6
 targetCompatibility = JavaVersion.VERSION_1_6
