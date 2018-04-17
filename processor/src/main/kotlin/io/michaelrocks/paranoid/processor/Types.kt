@@ -14,16 +14,9 @@
  * limitations under the License.
  */
 
-package io.michaelrocks.paranoid;
+package io.michaelrocks.paranoid.processor
 
-import java.lang.annotation.Documented;
-import java.lang.annotation.ElementType;
-import java.lang.annotation.Retention;
-import java.lang.annotation.RetentionPolicy;
-import java.lang.annotation.Target;
+import io.michaelrocks.grip.mirrors.getObjectType
+import io.michaelrocks.paranoid.Obfuscate
 
-@Target(ElementType.TYPE)
-@Retention(RetentionPolicy.CLASS)
-@Documented
-public @interface Obfuscate {
-}
+val OBFUSCATE_TYPE = getObjectType<Obfuscate>()

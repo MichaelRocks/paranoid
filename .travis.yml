@@ -5,7 +5,7 @@ android:
     - tools
     - tools
     - platform-tools
-    - build-tools-27.0.0
+    - build-tools-27.0.3
     - android-27
 
 jdk:
@@ -22,6 +22,9 @@ cache:
     - $HOME/.m2
     - $HOME/.gradle/caches/
     - $HOME/.gradle/wrapper/
+
+before_install:
+  - yes | sdkmanager "platforms;android-27"
 
 install:
   - ./gradlew assemble publishToMavenLocal -Pbootstrap=true --no-daemon --rerun-tasks

@@ -14,16 +14,18 @@
  * limitations under the License.
  */
 
-package io.michaelrocks.paranoid;
+package io.michaelrocks.paranoid.processor
 
-import java.lang.annotation.Documented;
-import java.lang.annotation.ElementType;
-import java.lang.annotation.Retention;
-import java.lang.annotation.RetentionPolicy;
-import java.lang.annotation.Target;
+import org.objectweb.asm.AnnotationVisitor
+import org.objectweb.asm.ClassVisitor
+import org.objectweb.asm.Opcodes
 
-@Target(ElementType.TYPE)
-@Retention(RetentionPolicy.CLASS)
-@Documented
-public @interface Obfuscate {
+class RemoveObfuscateClassPatcher(
+    delegate: ClassVisitor
+) : ClassVisitor(Opcodes.ASM5, delegate) {
+  private val obfuscateDescriptor = OBFUSCATE_TYPE.descriptor
+
+  override fun visitAnnotation(desc: String, visible: Boolean): AnnotationVisitor? {
+    return if (obfuscateDescriptor != desc) super.visitAnnotation(desc, visible) else null
+  }
 }

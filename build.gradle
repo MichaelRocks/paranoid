@@ -1,11 +1,29 @@
 allprojects {
-  ext.kotlinVersion = '1.2.21'
+  ext.kotlinVersion = '1.2.31'
+  ext.pabloVersion = '1.0.0'
+
+  ext.asmVersion = '6.0'
+  ext.gripVersion = '0.6.0-beta'
+  ext.logbackVersion = '1.2.3'
+
+  ext.junitVersion = '4.12'
+
+  ext.androidToolsVersion = '3.1.1'
+  ext.supportVersion = '27.1.0'
+
+  ext.runnerVersion = '1.0.1'
+  ext.espressoVersion = '3.0.1'
 
   buildscript {
     repositories {
       mavenLocal()
       google()
       jcenter()
+    }
+
+    dependencies {
+      classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlinVersion"
+      classpath "io.michaelrocks.pablo:pablo:$pabloVersion"
     }
   }
 
@@ -14,33 +32,7 @@ allprojects {
     google()
     jcenter()
   }
-}
 
-allprojects {
-  def properties = new Properties()
-  properties.load(new FileInputStream(new File(rootDir, "version.properties")))
-  def major = properties['version.major'] as int
-  def minor = properties['version.minor'] as int
-  def patch = properties['version.patch'] as int
-  def suffix = properties['version.suffix']?.toString()?.trim() ?: ""
-  def snapshot = properties['version.snapshot'].toBoolean()
-  version = "$major.$minor.$patch" + (suffix.isAllWhitespace() ? '' : "-$suffix") + (snapshot ? '-SNAPSHOT' : '')
   group = 'io.michaelrocks'
-
-  ext.dryRun = properties['version.dryRun'].toBoolean()
-  ext.publish = properties['version.publish'].toBoolean()
-}
-
-ext {
-  asmVersion = '5.2'
-  gripVersion = '0.5.3-beta'
-  logbackVersion = '1.2.3'
-
-  junitVersion = '4.12'
-
-  androidToolsVersion = '3.0.1'
-  supportVersion = '27.0.2'
-
-  runnerVersion = '1.0.1'
-  espressoVersion = '3.0.1'
+  version = '0.2.0'
 }

@@ -40,6 +40,8 @@ class ParanoidProcessor(
   private val stringRegistry = StringRegistryImpl()
 
   fun process() {
+    dumpConfiguration()
+
     require(inputs.size == outputs.size) {
       "Input collection $inputs and output collection $outputs have different sizes"
     }
@@ -49,8 +51,19 @@ class ParanoidProcessor(
 
     val deobfuscator = createDeobfuscator()
     logger.info("Prepare to generate {}", deobfuscator)
-    Patcher(deobfuscator, stringRegistry, grip.classRegistry).copyAndPatchClasses(inputs, outputs, analysisResult)
+    Patcher(deobfuscator, stringRegistry, analysisResult, grip.classRegistry).copyAndPatchClasses(inputs, outputs)
     Generator(deobfuscator, stringRegistry).generateDeobfuscator(sourcePath, genPath, outputs + classpath, bootClasspath)
+  }
+
+  private fun dumpConfiguration() {
+    logger.info("Starting ParanoidProcessor:")
+    logger.info("  inputs        = {}", inputs)
+    logger.info("  outputs       = {}", outputs)
+    logger.info("  sourcePath    = {}", sourcePath)
+    logger.info("  genPath       = {}", genPath)
+    logger.info("  classpath     = {}", classpath)
+    logger.info("  bootClasspath = {}", bootClasspath)
+    logger.info("  projectName   = {}", projectName)
   }
 
   private fun AnalysisResult.dump() {
