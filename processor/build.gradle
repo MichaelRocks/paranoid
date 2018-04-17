@@ -1,12 +1,5 @@
-buildscript {
-  dependencies {
-    classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlinVersion"
-  }
-}
-
-apply plugin: 'java'
 apply plugin: 'kotlin'
-apply plugin: 'bintray'
+apply plugin: 'io.michaelrocks.pablo'
 
 sourceCompatibility = JavaVersion.VERSION_1_6
 targetCompatibility = JavaVersion.VERSION_1_6
@@ -14,15 +7,21 @@ targetCompatibility = JavaVersion.VERSION_1_6
 dependencies {
   compile project(':core')
   compile "org.jetbrains.kotlin:kotlin-stdlib:$kotlinVersion"
-
-  compile "org.ow2.asm:asm:$asmVersion"
-  compile "org.ow2.asm:asm-commons:$asmVersion"
-  compile "io.michaelrocks:grip:$gripVersion"
   compile "ch.qos.logback:logback-classic:$logbackVersion"
+
+  relocate "org.ow2.asm:asm:$asmVersion"
+  relocate "org.ow2.asm:asm-commons:$asmVersion"
+  relocate "io.michaelrocks:grip:$gripVersion"
 
   testCompile "junit:junit:$junitVersion"
 }
 
 jar {
   destinationDir = file('build/jar')
+}
+
+shadowJar {
+  relocate 'io.michaelrocks.paranoid', 'io.michaelrocks.paranoid'
+  relocate 'io.michaelrocks.grip', 'io.michaelrocks.paranoid.grip'
+  relocate 'org.objectweb.asm', 'io.michaelrocks.paranoid.asm'
 }

@@ -2,11 +2,12 @@ buildscript {
   dependencies {
     classpath "com.android.tools.build:gradle:$androidToolsVersion"
     classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlinVersion"
-    classpath "io.michaelrocks:paranoid-gradle-plugin:$version"
+    classpath "io.michaelrocks:paranoid-gradle-plugin:$version:repack"
   }
 }
 
 apply plugin: 'com.android.application'
+apply plugin: "kotlin-android"
 apply plugin: 'io.michaelrocks.paranoid'
 
 android {
@@ -47,6 +48,7 @@ android {
 }
 
 dependencies {
+  implementation "org.jetbrains.kotlin:kotlin-stdlib:$kotlinVersion"
   implementation "com.android.support:appcompat-v7:$supportVersion"
 
   testImplementation "junit:junit:$junitVersion"
