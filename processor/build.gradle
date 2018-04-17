@@ -1,9 +1,3 @@
-buildscript {
-  dependencies {
-    classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlinVersion"
-  }
-}
-
 apply plugin: 'kotlin'
 apply plugin: 'io.michaelrocks.pablo'
 

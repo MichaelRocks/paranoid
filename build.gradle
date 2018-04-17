@@ -22,6 +22,7 @@ allprojects {
     }
 
     dependencies {
+      classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlinVersion"
       classpath "io.michaelrocks.pablo:pablo:$pabloVersion"
     }
   }
