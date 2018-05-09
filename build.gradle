@@ -5,8 +5,8 @@ allprojects {
   ext.kotlinVersion = '1.2.41'
   ext.pabloVersion = '1.0.0'
 
-  ext.asmVersion = '6.0'
-  ext.gripVersion = '0.6.0-beta'
+  ext.asmVersion = '6.1.1'
+  ext.gripVersion = '0.6.2-beta'
   ext.logbackVersion = '1.2.3'
 
   ext.junitVersion = '4.12'
