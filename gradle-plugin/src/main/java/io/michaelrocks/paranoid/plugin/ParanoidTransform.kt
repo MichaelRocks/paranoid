@@ -35,8 +35,8 @@ class ParanoidTransform(private val android: BaseExtension) : Transform() {
       val format = if (input is JarInput) Format.JAR else Format.DIRECTORY
       invocation.outputProvider.getContentLocation(
           input.name,
-          QualifiedContent.DefaultContentType.CLASSES,
-          QualifiedContent.Scope.PROJECT,
+          input.contentTypes,
+          input.scopes,
           format
       )
     }

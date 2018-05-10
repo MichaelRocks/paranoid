@@ -84,7 +84,7 @@ class Patcher(
     logger.debug("  Source: {}", sourceFile)
     logger.debug("  Target: {}", targetFile)
     val reader = ClassReader(sourceFile.readBytes())
-    val writer = StandaloneClassWriter(reader, ClassWriter.COMPUTE_MAXS or ClassWriter.COMPUTE_FRAMES, classRegistry)
+    val writer = StandaloneClassWriter(ClassWriter.COMPUTE_MAXS or ClassWriter.COMPUTE_FRAMES, classRegistry)
     val patcher =
         writer
             .wrapIf(hasObfuscateAnnotation) { RemoveObfuscateClassPatcher(it) }

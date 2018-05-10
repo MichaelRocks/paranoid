@@ -1,18 +1,21 @@
 allprojects {
-  ext.kotlinVersion = '1.2.31'
-  ext.pabloVersion = '1.0.0'
+  group = 'io.michaelrocks'
+  version = '0.2.1'
 
-  ext.asmVersion = '6.0'
-  ext.gripVersion = '0.6.0-beta'
+  ext.kotlinVersion = '1.2.41'
+  ext.pabloVersion = '1.0.1'
+
+  ext.asmVersion = '6.1.1'
+  ext.gripVersion = '0.6.2-beta'
   ext.logbackVersion = '1.2.3'
 
   ext.junitVersion = '4.12'
 
-  ext.androidToolsVersion = '3.1.1'
-  ext.supportVersion = '27.1.0'
+  ext.androidToolsVersion = '3.1.2'
+  ext.supportVersion = '27.1.1'
 
-  ext.runnerVersion = '1.0.1'
-  ext.espressoVersion = '3.0.1'
+  ext.runnerVersion = '1.0.2'
+  ext.espressoVersion = '3.0.2'
 
   buildscript {
     repositories {
@@ -32,7 +35,4 @@ allprojects {
     google()
     jcenter()
   }
-
-  group = 'io.michaelrocks'
-  version = '0.2.0'
 }
