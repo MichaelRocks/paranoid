@@ -3,7 +3,7 @@ allprojects {
   version = '0.2.1'
 
   ext.kotlinVersion = '1.2.41'
-  ext.pabloVersion = '1.0.0'
+  ext.pabloVersion = '1.0.1'
 
   ext.asmVersion = '6.1.1'
   ext.gripVersion = '0.6.2-beta'
