@@ -12,7 +12,7 @@ dependencies {
 
   relocate project(':processor')
 
-  compile "org.jetbrains.kotlin:kotlin-stdlib:$kotlinVersion"
+  implementation "org.jetbrains.kotlin:kotlin-stdlib:$kotlinVersion"
 }
 
 def generatedDir = new File(projectDir, "generated")
