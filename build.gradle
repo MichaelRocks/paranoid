@@ -11,11 +11,11 @@ allprojects {
 
   ext.junitVersion = '4.12'
 
-  ext.androidToolsVersion = '3.1.1'
-  ext.supportVersion = '27.1.0'
+  ext.androidToolsVersion = '3.1.2'
+  ext.supportVersion = '27.1.1'
 
-  ext.runnerVersion = '1.0.1'
-  ext.espressoVersion = '3.0.1'
+  ext.runnerVersion = '1.0.2'
+  ext.espressoVersion = '3.0.2'
 
   buildscript {
     repositories {
