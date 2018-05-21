@@ -2,7 +2,7 @@ buildscript {
   dependencies {
     classpath "com.android.tools.build:gradle:$androidToolsVersion"
     classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlinVersion"
-    classpath "io.michaelrocks:paranoid-gradle-plugin:$version:repack"
+    classpath "io.michaelrocks:paranoid-gradle-plugin:$version"
   }
 }
 
