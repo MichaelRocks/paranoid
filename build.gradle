@@ -1,9 +1,9 @@
 allprojects {
   group = 'io.michaelrocks'
-  version = '0.2.1'
+  version = '0.2.2'
 
   ext.kotlinVersion = '1.2.41'
-  ext.pabloVersion = '1.0.1'
+  ext.pabloVersion = '1.0.2'
 
   ext.asmVersion = '6.1.1'
   ext.gripVersion = '0.6.2-beta'

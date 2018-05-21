@@ -18,7 +18,7 @@ buildscript {
   }
 
   dependencies {
-    classpath 'io.michaelrocks:paranoid-gradle-plugin:0.2.1'
+    classpath 'io.michaelrocks:paranoid-gradle-plugin:0.2.2'
   }
 }
 
