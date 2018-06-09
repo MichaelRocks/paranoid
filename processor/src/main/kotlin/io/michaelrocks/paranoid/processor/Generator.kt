@@ -105,22 +105,41 @@ class Generator(
       appendln("package $packageName;")
       appendln()
       appendln("public class $className {")
-      appendln("  private static final String chars = ${createStringLiteral(chars)};")
-      appendln("  private static final String indexes = ${createStringLiteral(indexes)};")
-      appendln("  private static final String locations = ${createStringLiteral(offsets)};")
+      appendln("  private static final String[] charChunks = new String[] {")
+      appendln("      ${createStringLiteralsForChars(chars).joinToString(",\n")}")
+      appendln("  };")
+      appendln("  private static final String[] indexChunks = new String[] {")
+      appendln("      ${createStringLiteralsForIndexes(indexes).joinToString(",\n")}")
+      appendln("  };")
+      appendln("  private static final String[] locationChunks = new String[] {")
+      appendln("      ${createStringLiteralsForLocations(offsets).joinToString(",\n")}")
+      appendln("  };")
       appendln()
       appendln("  public static String ${deobfuscator.deobfuscationMethod.name}(final int id) {")
-      appendln("    final int offset1Low = locations.charAt(2 * id) & 0xffff;")
-      appendln("    final int offset1High = locations.charAt(2 * id + 1) & 0xffff;")
+      appendln("    final int location1ChunkIndex = id / $MAX_LOCATION_COUNT;")
+      appendln("    final int location1Index = id % $MAX_LOCATION_COUNT;")
+      appendln("    final int location2ChunkIndex = (id + 1) / $MAX_LOCATION_COUNT;")
+      appendln("    final int location2Index = (id + 1) % $MAX_LOCATION_COUNT;")
+      appendln("    final String locations1 = locationChunks[location1ChunkIndex];")
+      appendln("    final String locations2 = locationChunks[location2ChunkIndex];")
+      appendln("    final int offset1Low = locations1.charAt(2 * location1Index) & 0xffff;")
+      appendln("    final int offset1High = locations1.charAt(2 * location1Index + 1) & 0xffff;")
       appendln("    final int offset1 = (offset1High << 16) | offset1Low;")
-      appendln("    final int offset2Low = locations.charAt(2 * id + 2);")
-      appendln("    final int offset2High = locations.charAt(2 * id + 3);")
+      appendln("    final int offset2Low = locations2.charAt(2 * location2Index);")
+      appendln("    final int offset2High = locations2.charAt(2 * location2Index + 1);")
       appendln("    final int offset2 = (offset2High << 16) | offset2Low;")
       appendln("    final int length = offset2 - offset1;")
       appendln("    final char[] stringChars = new char[length];")
       appendln("    for (int i = 0; i < length; ++i) {")
-      appendln("      final int index = indexes.charAt(offset1 + i) & 0xffff;")
-      appendln("      stringChars[i] = chars.charAt(index);")
+      appendln("      final int offset = offset1 + i;")
+      appendln("      final int indexChunkIndex = offset / $MAX_INDEX_COUNT;")
+      appendln("      final int indexIndex = offset % $MAX_INDEX_COUNT;")
+      appendln("      final String indexes = indexChunks[indexChunkIndex];")
+      appendln("      final int index = indexes.charAt(indexIndex) & 0xffff;")
+      appendln("      final int charChunkIndex = index / $MAX_CHAR_COUNT;")
+      appendln("      final int charIndex = index % $MAX_CHAR_COUNT;")
+      appendln("      final String chars = charChunks[charChunkIndex];")
+      appendln("      stringChars[i] = chars.charAt(charIndex);")
       appendln("    }")
       appendln("    return new String(stringChars);")
       appendln("  }")
@@ -129,37 +148,70 @@ class Generator(
   }
 
   companion object {
-    private fun createStringLiteral(array: CharArray): String {
-      return buildString {
-        append("\"")
-        array.forEach {
-          append(it.toLiteral())
+    // That's not a maximum string length allowed by JVM and not even a maximum length of a string literal.
+    // This constant is an approximation of the maximum string length with arbitrary content that's safe to store
+    // in a class file. Actually it should be 65535 / 6, where 65535 is a maximum length of the string literal and 6 is
+    // the maximum length of UTF-8 character.
+    private const val MAX_STRING_LENGTH = 8192
+
+    private const val MAX_CHAR_COUNT = MAX_STRING_LENGTH
+    private const val MAX_INDEX_COUNT = MAX_STRING_LENGTH
+    private const val MAX_LOCATION_COUNT = MAX_STRING_LENGTH / 2
+
+    private fun createStringLiteralsForChars(array: CharArray): List<String> {
+      return createChunkList(array.size, MAX_CHAR_COUNT) { chunkStart, chunkEnd ->
+        buildString {
+          append("\"")
+          for (index in chunkStart until chunkEnd) {
+            append(array[index].toLiteral())
+          }
+          append("\"")
         }
-        append("\"")
       }
     }
 
-    private fun createStringLiteral(array: ShortArray): String {
-      return buildString {
-        append("\"")
-        array.forEach {
-          val char = it.toChar()
-          append(char.toLiteral())
+    private fun createStringLiteralsForIndexes(array: ShortArray): List<String> {
+      return createChunkList(array.size, MAX_INDEX_COUNT) { chunkStart, chunkEnd ->
+        buildString {
+          append("\"")
+          for (index in chunkStart until chunkEnd) {
+            append(array[index].toChar().toLiteral())
+          }
+          append("\"")
         }
-        append("\"")
       }
     }
 
-    private fun createStringLiteral(array: IntArray): String {
-      return buildString {
-        append("\"")
-        array.forEach {
-          val char1 = (it and 0xffff).toChar()
-          val char2 = (it ushr 16).toChar()
-          append(char1.toLiteral())
-          append(char2.toLiteral())
+    private fun createStringLiteralsForLocations(array: IntArray): List<String> {
+      return createChunkList(array.size, MAX_LOCATION_COUNT) { chunkStart, chunkEnd ->
+        buildString {
+          append("\"")
+          for (index in chunkStart until chunkEnd) {
+            val int = array[index]
+            val char1 = (int and 0xffff).toChar()
+            val char2 = (int ushr 16).toChar()
+            append(char1.toLiteral())
+            append(char2.toLiteral())
+          }
+          append("\"")
         }
-        append("\"")
+      }
+    }
+
+    private inline fun createChunkList(size: Int, chunkSize: Int, string: (Int, Int) -> String): List<String> {
+      val strings = ArrayList<String>()
+      forEachChunk(size, chunkSize) { chunkStart, chunkEnd ->
+        strings += string(chunkStart, chunkEnd)
+      }
+      return strings
+    }
+
+    private inline fun forEachChunk(size: Int, chunkSize: Int, action: (Int, Int) -> Unit) {
+      val chunkCount = (size + chunkSize - 1) / chunkSize
+      repeat(chunkCount) { chunkIndex ->
+        val chunkStart = chunkIndex * chunkSize
+        val chunkEnd = minOf(chunkStart + chunkSize, size)
+        action(chunkStart, chunkEnd)
       }
     }
 
