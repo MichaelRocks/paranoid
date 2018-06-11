@@ -1,25 +1,23 @@
 buildscript {
   dependencies {
-    classpath "com.android.tools.build:gradle:$androidToolsVersion"
-    classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlinVersion"
     classpath "io.michaelrocks:paranoid-gradle-plugin:$version"
   }
 }
 
 apply plugin: 'com.android.application'
-apply plugin: "kotlin-android"
+apply plugin: 'kotlin-android'
 apply plugin: 'io.michaelrocks.paranoid'
 
 android {
-  compileSdkVersion 27
-  buildToolsVersion "27.0.3"
+  compileSdkVersion androidCompileSdkVersion
+  buildToolsVersion androidBuildToolsVersion
 
   defaultConfig {
     applicationId "io.michaelrocks.paranoid.sample"
-    minSdkVersion 16
-    targetSdkVersion 27
+    minSdkVersion androidMinSdkVersion
+    targetSdkVersion androidTargetSdkVersion
     versionCode 1
-    versionName "1.0"
+    versionName version
 
     testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
   }

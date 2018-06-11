@@ -17,6 +17,11 @@ allprojects {
   ext.runnerVersion = '1.0.2'
   ext.espressoVersion = '3.0.2'
 
+  ext.androidBuildToolsVersion = '27.0.3'
+  ext.androidCompileSdkVersion = 27
+  ext.androidMinSdkVersion = 16
+  ext.androidTargetSdkVersion = ext.androidCompileSdkVersion
+
   buildscript {
     repositories {
       mavenLocal()
@@ -25,6 +30,7 @@ allprojects {
     }
 
     dependencies {
+      classpath "com.android.tools.build:gradle:$androidToolsVersion"
       classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlinVersion"
       classpath "io.michaelrocks.pablo:pablo:$pabloVersion"
     }
