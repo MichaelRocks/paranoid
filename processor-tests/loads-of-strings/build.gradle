@@ -13,7 +13,7 @@ android {
   buildToolsVersion androidBuildToolsVersion
 
   defaultConfig {
-    applicationId "io.michaelrocks.paranoid.sample"
+    applicationId "io.michaelrocks.paranoid.processor.loadsofstrings"
     minSdkVersion androidMinSdkVersion
     targetSdkVersion androidTargetSdkVersion
     versionCode 1
@@ -22,34 +22,15 @@ android {
     testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
   }
 
-  signingConfigs {
-    release {
-      storeFile = file('release.keystore')
-      storePassword = 'paranoid'
-      keyAlias = 'paranoid'
-      keyPassword = 'paranoid'
-    }
-  }
-
   buildTypes {
-    debug {
-      minifyEnabled false
-      proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
-    }
-
     release {
-      minifyEnabled true
-      proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
-      signingConfig signingConfigs.release
+      minifyEnabled false
     }
   }
 }
 
 dependencies {
   implementation "org.jetbrains.kotlin:kotlin-stdlib:$kotlinVersion"
-  implementation "com.android.support:appcompat-v7:$supportVersion"
-
-  testImplementation "junit:junit:$junitVersion"
 
   androidTestImplementation "com.android.support.test:runner:$runnerVersion"
   androidTestImplementation "com.android.support.test:rules:$runnerVersion"
