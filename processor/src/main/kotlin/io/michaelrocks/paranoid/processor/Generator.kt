@@ -19,8 +19,6 @@ package io.michaelrocks.paranoid.processor
 import io.michaelrocks.paranoid.processor.logging.getLogger
 import io.michaelrocks.paranoid.processor.model.Deobfuscator
 import java.io.File
-import java.util.Collections
-import java.util.HashSet
 import javax.tools.DiagnosticCollector
 import javax.tools.JavaFileObject
 import javax.tools.StandardLocation
@@ -80,35 +78,25 @@ class Generator(
 
   private fun generateDeobfuscatorSourceCode(): String {
     val strings = stringRegistry.getAllStrings().toList()
-    val indexesByChar = strings
-        .fold(HashSet<Char>()) { set, string ->
-          string.forEach { set += it }
-          set
-        }
-        .toMutableList()
-        .apply { Collections.shuffle(this) }
+    val joinedStrings = strings.joinToString(separator = "")
+    val indexesByChar = joinedStrings
+        .toHashSet()
+        .shuffled()
         .withIndex()
         .associateBy(
             { it.value },
             { it.index }
         )
 
-    val indexes = strings.joinToString(separator = "").map { indexesByChar[it] }
-    val offsets = strings.
-        foldIndexed(IntArray(strings.size + 1)) { index, offsets, string ->
-          offsets[index + 1] = offsets[index] + string.length
-          offsets
-        }
+    val chars = CharArray(indexesByChar.size)
+    indexesByChar.forEach { (char, index) -> chars[index] = char }
 
-    val charCount = indexesByChar.size
-    val indexCount = indexes.size
-    val stringCount = strings.size
-    val locationCount = stringCount * 2
-
-    val chunkSize = 1024
-    val charChunkCount = (charCount + chunkSize - 1) / chunkSize
-    val indexChunkCount = (indexCount + chunkSize - 1) / chunkSize
-    val locationChunkCount = (stringCount + chunkSize - 1) / chunkSize
+    val indexes = ShortArray(joinedStrings.length) { indexesByChar[joinedStrings[it]]!!.toShort() }
+    val offsets = IntArray(strings.size + 1)
+    strings.forEachIndexed { index, string ->
+      val lastIndex = offsets[index]
+      offsets[index + 1] = lastIndex + string.length
+    }
 
     return buildString {
       val internalName = deobfuscator.type.internalName
@@ -117,68 +105,41 @@ class Generator(
       appendln("package $packageName;")
       appendln()
       appendln("public class $className {")
-      appendln("  private static final char[] chars = new char[$charCount];")
-      appendln("  private static final short[] indexes = new short[$indexCount];")
-      appendln("  private static final int[] locations = new int[$locationCount];")
-      appendln()
-      appendln("  static {")
-      repeat(charChunkCount) { chunkIndex ->
-        appendln("    fillChars$chunkIndex();")
-      }
-      repeat(indexChunkCount) { chunkIndex ->
-        appendln("    fillIndexes$chunkIndex();")
-      }
-      repeat(locationChunkCount) { chunkIndex ->
-        appendln("    fillLocations$chunkIndex();")
-      }
-      appendln("  }")
-
-      val charsWithIndexes = indexesByChar.entries.toList()
-      repeat(charChunkCount) { chunkIndex ->
-        appendln()
-        appendln("  public static void fillChars$chunkIndex() {")
-        appendln("    final char[] array = chars;")
-        forEachInChunk(chunkIndex, chunkSize, charCount) { entryIndex ->
-          val (char, index) = charsWithIndexes[entryIndex]
-          val literal = char.toLiteral()
-          appendln("    array[$index] = $literal;")
-        }
-        appendln("  }")
-      }
-
-      repeat(indexChunkCount) { chunkIndex ->
-        appendln()
-        appendln("  public static void fillIndexes$chunkIndex() {")
-        appendln("    final short[] array = indexes;")
-        forEachInChunk(chunkIndex, chunkSize, indexCount) { indexIndex ->
-          val index = indexes[indexIndex]
-          appendln("    array[$indexIndex] = $index;")
-        }
-        appendln("  }")
-      }
-
-      repeat(locationChunkCount) { chunkIndex ->
-        appendln()
-        appendln("  public static void fillLocations$chunkIndex() {")
-        appendln("    final int[] array = locations;")
-        forEachInChunk(chunkIndex, chunkSize, stringCount) { locationIndex ->
-          val offset = offsets[locationIndex]
-          val length = strings[locationIndex].length
-          val offsetIndex = locationIndex * 2
-          val lengthIndex = offsetIndex + 1
-          appendln("    array[$offsetIndex] = $offset;")
-          appendln("    array[$lengthIndex] = $length;")
-        }
-        appendln("  }")
-      }
-
+      appendln("  private static final String[] charChunks = new String[] {")
+      appendln("      ${createStringLiteralsForChars(chars).joinToString(",\n")}")
+      appendln("  };")
+      appendln("  private static final String[] indexChunks = new String[] {")
+      appendln("      ${createStringLiteralsForIndexes(indexes).joinToString(",\n")}")
+      appendln("  };")
+      appendln("  private static final String[] locationChunks = new String[] {")
+      appendln("      ${createStringLiteralsForLocations(offsets).joinToString(",\n")}")
+      appendln("  };")
       appendln()
       appendln("  public static String ${deobfuscator.deobfuscationMethod.name}(final int id) {")
-      appendln("    final int offset = locations[id * 2];")
-      appendln("    final int length = locations[id * 2 + 1];")
+      appendln("    final int location1ChunkIndex = id / $MAX_LOCATION_COUNT;")
+      appendln("    final int location1Index = id % $MAX_LOCATION_COUNT;")
+      appendln("    final int location2ChunkIndex = (id + 1) / $MAX_LOCATION_COUNT;")
+      appendln("    final int location2Index = (id + 1) % $MAX_LOCATION_COUNT;")
+      appendln("    final String locations1 = locationChunks[location1ChunkIndex];")
+      appendln("    final String locations2 = locationChunks[location2ChunkIndex];")
+      appendln("    final int offset1Low = locations1.charAt(2 * location1Index) & 0xffff;")
+      appendln("    final int offset1High = locations1.charAt(2 * location1Index + 1) & 0xffff;")
+      appendln("    final int offset1 = (offset1High << 16) | offset1Low;")
+      appendln("    final int offset2Low = locations2.charAt(2 * location2Index);")
+      appendln("    final int offset2High = locations2.charAt(2 * location2Index + 1);")
+      appendln("    final int offset2 = (offset2High << 16) | offset2Low;")
+      appendln("    final int length = offset2 - offset1;")
       appendln("    final char[] stringChars = new char[length];")
       appendln("    for (int i = 0; i < length; ++i) {")
-      appendln("      stringChars[i] = chars[indexes[offset + i]];")
+      appendln("      final int offset = offset1 + i;")
+      appendln("      final int indexChunkIndex = offset / $MAX_INDEX_COUNT;")
+      appendln("      final int indexIndex = offset % $MAX_INDEX_COUNT;")
+      appendln("      final String indexes = indexChunks[indexChunkIndex];")
+      appendln("      final int index = indexes.charAt(indexIndex) & 0xffff;")
+      appendln("      final int charChunkIndex = index / $MAX_CHAR_COUNT;")
+      appendln("      final int charIndex = index % $MAX_CHAR_COUNT;")
+      appendln("      final String chars = charChunks[charChunkIndex];")
+      appendln("      stringChars[i] = chars.charAt(charIndex);")
       appendln("    }")
       appendln("    return new String(stringChars);")
       appendln("  }")
@@ -186,22 +147,84 @@ class Generator(
     }
   }
 
-  private inline fun forEachInChunk(chunkIndex: Int, chunkSize: Int, totalSize: Int, action: (Int) -> Unit) {
-    val chunkIndexStart = chunkIndex * chunkSize
-    val chunkIndexEnd = minOf((chunkIndex + 1) * chunkSize, totalSize)
-    for (indexInChunk in chunkIndexStart until chunkIndexEnd) {
-      action(indexInChunk)
-    }
-  }
+  companion object {
+    // That's not a maximum string length allowed by JVM and not even a maximum length of a string literal.
+    // This constant is an approximation of the maximum string length with arbitrary content that's safe to store
+    // in a class file. Actually it should be 65535 / 6, where 65535 is a maximum length of the string literal and 6 is
+    // the maximum length of UTF-8 character.
+    private const val MAX_STRING_LENGTH = 8192
 
-  // https://docs.oracle.com/javase/specs/jls/se8/html/jls-3.html#jls-3.10.4
-  private fun Char.toLiteral(): String {
-    return when (this) {
-      '\n' -> "'\\n'"
-      '\r' -> "'\\r'"
-      '\'' -> "'\\''"
-      '\\' -> "'\\\\'"
-      else -> "'\\u%04x'".format(toShort())
+    private const val MAX_CHAR_COUNT = MAX_STRING_LENGTH
+    private const val MAX_INDEX_COUNT = MAX_STRING_LENGTH
+    private const val MAX_LOCATION_COUNT = MAX_STRING_LENGTH / 2
+
+    private fun createStringLiteralsForChars(array: CharArray): List<String> {
+      return createChunkList(array.size, MAX_CHAR_COUNT) { chunkStart, chunkEnd ->
+        buildString {
+          append("\"")
+          for (index in chunkStart until chunkEnd) {
+            append(array[index].toLiteral())
+          }
+          append("\"")
+        }
+      }
+    }
+
+    private fun createStringLiteralsForIndexes(array: ShortArray): List<String> {
+      return createChunkList(array.size, MAX_INDEX_COUNT) { chunkStart, chunkEnd ->
+        buildString {
+          append("\"")
+          for (index in chunkStart until chunkEnd) {
+            append(array[index].toChar().toLiteral())
+          }
+          append("\"")
+        }
+      }
+    }
+
+    private fun createStringLiteralsForLocations(array: IntArray): List<String> {
+      return createChunkList(array.size, MAX_LOCATION_COUNT) { chunkStart, chunkEnd ->
+        buildString {
+          append("\"")
+          for (index in chunkStart until chunkEnd) {
+            val int = array[index]
+            val char1 = (int and 0xffff).toChar()
+            val char2 = (int ushr 16).toChar()
+            append(char1.toLiteral())
+            append(char2.toLiteral())
+          }
+          append("\"")
+        }
+      }
+    }
+
+    private inline fun createChunkList(size: Int, chunkSize: Int, string: (Int, Int) -> String): List<String> {
+      val strings = ArrayList<String>()
+      forEachChunk(size, chunkSize) { chunkStart, chunkEnd ->
+        strings += string(chunkStart, chunkEnd)
+      }
+      return strings
+    }
+
+    private inline fun forEachChunk(size: Int, chunkSize: Int, action: (Int, Int) -> Unit) {
+      val chunkCount = (size + chunkSize - 1) / chunkSize
+      repeat(chunkCount) { chunkIndex ->
+        val chunkStart = chunkIndex * chunkSize
+        val chunkEnd = minOf(chunkStart + chunkSize, size)
+        action(chunkStart, chunkEnd)
+      }
+    }
+
+    // https://docs.oracle.com/javase/specs/jls/se8/html/jls-3.html#jls-3.10.4
+    private fun Char.toLiteral(): String {
+      return when (this) {
+        '\n' -> "\\n"
+        '\r' -> "\\r"
+        '\'' -> "\\'"
+        '\"' -> "\\\""
+        '\\' -> "\\\\"
+        else -> "\\u%04x".format(toShort())
+      }
     }
   }
 }
