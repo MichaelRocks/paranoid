@@ -1,0 +1,38 @@
+buildscript {
+  dependencies {
+    classpath "io.michaelrocks:paranoid-gradle-plugin:$version"
+  }
+}
+
+apply plugin: 'com.android.application'
+apply plugin: 'kotlin-android'
+apply plugin: 'io.michaelrocks.paranoid'
+
+android {
+  compileSdkVersion androidCompileSdkVersion
+  buildToolsVersion androidBuildToolsVersion
+
+  defaultConfig {
+    applicationId "io.michaelrocks.paranoid.processor.loadsofstrings"
+    minSdkVersion androidMinSdkVersion
+    targetSdkVersion androidTargetSdkVersion
+    versionCode 1
+    versionName version
+
+    testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
+  }
+
+  buildTypes {
+    release {
+      minifyEnabled false
+    }
+  }
+}
+
+dependencies {
+  implementation "org.jetbrains.kotlin:kotlin-stdlib:$kotlinVersion"
+
+  androidTestImplementation "com.android.support.test:runner:$runnerVersion"
+  androidTestImplementation "com.android.support.test:rules:$runnerVersion"
+  androidTestImplementation "com.android.support.test.espresso:espresso-core:$espressoVersion"
+}
