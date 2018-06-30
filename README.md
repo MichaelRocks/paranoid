@@ -29,6 +29,19 @@ apply plugin: 'io.michaelrocks.paranoid'
 Now you can just annotate classes with strings that need to be obfuscated with `@Obfuscate`.
 After you project compiles every string in annotated classes will be obfuscated.
 
+Configuration
+-------------
+Paranoid plugin can be configured using `paranoid` extension object:
+```groovy
+paranoid {
+  // ...
+}
+
+```
+
+The extension object contains the following properties:
+- `enabled` — `boolean`. Allows to disable obfuscation for the project. Default value is `true`.  
+
 How it works
 ------------
 Let's say you have an `Activity` that contains some string you want to be obfuscated.

@@ -28,7 +28,10 @@ import io.michaelrocks.paranoid.processor.ParanoidProcessor
 import java.io.File
 import java.util.EnumSet
 
-class ParanoidTransform(private val android: BaseExtension) : Transform() {
+class ParanoidTransform(
+    private val paranoid: ParanoidExtension,
+    private val android: BaseExtension
+) : Transform() {
   override fun transform(invocation: TransformInvocation) {
     val inputs = invocation.inputs.flatMap { it.jarInputs + it.directoryInputs }
     val outputs = inputs.map { input ->
@@ -39,6 +42,11 @@ class ParanoidTransform(private val android: BaseExtension) : Transform() {
           input.scopes,
           format
       )
+    }
+
+    if (!paranoid.isEnabled) {
+      copyInputsToOutputs(inputs.map { it.file }, outputs)
+      return
     }
 
     val processor = ParanoidProcessor(
@@ -102,7 +110,10 @@ class ParanoidTransform(private val android: BaseExtension) : Transform() {
   }
 
   override fun getParameterInputs(): MutableMap<String, Any> {
-    return mutableMapOf("version" to Build.VERSION)
+    return mutableMapOf(
+        "version" to Build.VERSION,
+        "enabled" to paranoid.isEnabled
+    )
   }
 
   private fun TransformOutputProvider.getContentLocation(
@@ -112,5 +123,11 @@ class ParanoidTransform(private val android: BaseExtension) : Transform() {
       format: Format
   ): File {
     return getContentLocation(name, setOf(contentType), EnumSet.of(scope), format)
+  }
+
+  private fun copyInputsToOutputs(inputs: List<File>, outputs: List<File>) {
+    inputs.zip(outputs) { input, output ->
+      input.copyRecursively(output, overwrite = true)
+    }
   }
 }
