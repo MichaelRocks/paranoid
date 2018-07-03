@@ -41,6 +41,7 @@ paranoid {
 
 The extension object contains the following properties:
 - `enabled` — `boolean`. Allows to disable obfuscation for the project. Default value is `true`.  
+- `includeSubprojects` — `boolean`. Allows to enable obfuscation for subprojects. Default value is `false`.  
 
 How it works
 ------------

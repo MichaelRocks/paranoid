@@ -82,27 +82,34 @@ class ParanoidTransform(
   }
 
   override fun getScopes(): MutableSet<in QualifiedContent.Scope> {
-    return EnumSet.of(QualifiedContent.Scope.PROJECT)
+    val scopes = EnumSet.of(QualifiedContent.Scope.PROJECT)
+    if (paranoid.includeSubprojects) {
+      scopes += QualifiedContent.Scope.SUB_PROJECTS
+    }
+    return scopes
   }
 
   override fun getReferencedScopes(): MutableSet<in QualifiedContent.Scope> {
-    if (PluginVersion.major >= 3) {
-      return EnumSet.of(
-          QualifiedContent.Scope.PROJECT,
-          QualifiedContent.Scope.SUB_PROJECTS,
-          QualifiedContent.Scope.EXTERNAL_LIBRARIES,
-          QualifiedContent.Scope.PROVIDED_ONLY
-      )
-    } else {
-      @Suppress("DEPRECATION")
-      return EnumSet.of(
-          QualifiedContent.Scope.PROJECT,
-          QualifiedContent.Scope.PROJECT_LOCAL_DEPS,
-          QualifiedContent.Scope.SUB_PROJECTS,
-          QualifiedContent.Scope.SUB_PROJECTS_LOCAL_DEPS,
-          QualifiedContent.Scope.PROVIDED_ONLY
-      )
+    val scopes =
+        if (PluginVersion.major >= 3) {
+          EnumSet.of(
+              QualifiedContent.Scope.PROJECT,
+              QualifiedContent.Scope.EXTERNAL_LIBRARIES,
+              QualifiedContent.Scope.PROVIDED_ONLY
+          )
+        } else {
+          @Suppress("DEPRECATION")
+          EnumSet.of(
+              QualifiedContent.Scope.PROJECT,
+              QualifiedContent.Scope.PROJECT_LOCAL_DEPS,
+              QualifiedContent.Scope.SUB_PROJECTS_LOCAL_DEPS,
+              QualifiedContent.Scope.PROVIDED_ONLY
+          )
+        }
+    if (!paranoid.includeSubprojects) {
+      scopes += QualifiedContent.Scope.SUB_PROJECTS
     }
+    return scopes
   }
 
   override fun isIncremental(): Boolean {
@@ -112,7 +119,8 @@ class ParanoidTransform(
   override fun getParameterInputs(): MutableMap<String, Any> {
     return mutableMapOf(
         "version" to Build.VERSION,
-        "enabled" to paranoid.isEnabled
+        "enabled" to paranoid.isEnabled,
+        "includeSubprojects" to paranoid.includeSubprojects
     )
   }
 
