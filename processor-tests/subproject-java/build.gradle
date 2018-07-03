@@ -1,0 +1,8 @@
+apply plugin: 'java-library'
+
+sourceCompatibility = JavaVersion.VERSION_1_6
+targetCompatibility = JavaVersion.VERSION_1_6
+
+dependencies {
+  implementation "io.michaelrocks:paranoid-core:$version"
+}
