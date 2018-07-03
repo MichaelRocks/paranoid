@@ -1,5 +1,5 @@
 /*
- * Copyright 2017 Michael Rozumyanskiy
+ * Copyright 2018 Michael Rozumyanskiy
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -23,11 +23,15 @@ import org.gradle.api.Project
 import org.gradle.api.UnknownDomainObjectException
 
 class ParanoidPlugin : Plugin<Project> {
+  private lateinit var extension: ParanoidExtension
+
   override fun apply(project: Project) {
+    extension = project.extensions.create("paranoid", ParanoidExtension::class.java)
+
     try {
       val android = project.extensions.getByName("android") as BaseExtension
       project.addDependencies(getDefaultConfiguration())
-      android.registerTransform(ParanoidTransform(android))
+      android.registerTransform(ParanoidTransform(extension, android))
     } catch (exception: UnknownDomainObjectException) {
       throw GradleException("Paranoid plugin must be applied *AFTER* Android plugin", exception)
     }

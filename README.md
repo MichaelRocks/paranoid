@@ -18,7 +18,7 @@ buildscript {
   }
 
   dependencies {
-    classpath 'io.michaelrocks:paranoid-gradle-plugin:0.2.3'
+    classpath 'io.michaelrocks:paranoid-gradle-plugin:0.2.4'
   }
 }
 
@@ -28,6 +28,20 @@ apply plugin: 'io.michaelrocks.paranoid'
 
 Now you can just annotate classes with strings that need to be obfuscated with `@Obfuscate`.
 After you project compiles every string in annotated classes will be obfuscated.
+
+Configuration
+-------------
+Paranoid plugin can be configured using `paranoid` extension object:
+```groovy
+paranoid {
+  // ...
+}
+
+```
+
+The extension object contains the following properties:
+- `enabled` — `boolean`. Allows to disable obfuscation for the project. Default value is `true`.  
+- `includeSubprojects` — `boolean`. Allows to enable obfuscation for subprojects. Default value is `false`.  
 
 How it works
 ------------
@@ -74,40 +88,6 @@ public class MainActivity extends AppCompatActivity {
   }
 }
 
-```
-
-Deobfuscator
-------------
-The current version of the `Deobfuscator` creates an array of unique characters from all obfuscated
-strings and an array of indexes in the character array per each obfuscated string. In the example
-above Paranoid generates the following code for the `Deobfuscator`.
-
-```java
-public class Deobfuscator {
-  private static final char[] chars = new char[] {
-    '\u003f', '\u0073', '\u0053', '\u006f', '\u0020', '\u0065', '\u003a', '\u0044',
-    '\u0051', '\u0074', '\u0064', '\u0069', '\u006b', '\u0041', '\u0021', '\u0077',
-    '\u0072', '\u0025', '\u0075'
-  };
-
-  private static final short[][] indexes = new short[][] {
-    { 8, 6, 4, 17, 1 },
-    { 7, 3, 5, 1, 4, 11, 9, 4, 15, 3, 16, 12, 0 },
-    { 13, 6, 4, 17, 1 },
-    { 2, 18, 16, 5, 4, 11, 9, 4, 10, 3, 5, 1, 14 },
-    { 8, 6, 4, 17, 1 },
-    { 13, 6, 4, 17, 1 }
-  };
-
-  public static String getString(final int id) {
-    final short[] stringIndexes = indexes[id];
-    final char[] stringChars = new char[stringIndexes.length];
-    for (int i = 0; i < stringIndexes.length; ++i) {
-      stringChars[i] = chars[stringIndexes[i]];
-    }
-    return new String(stringChars);
-  }
-}
 ```
 
 License

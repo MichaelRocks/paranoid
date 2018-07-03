@@ -19,12 +19,13 @@ package io.michaelrocks.paranoid.processor
 import io.michaelrocks.grip.ClassRegistry
 import io.michaelrocks.grip.mirrors.Type
 import io.michaelrocks.grip.mirrors.getObjectTypeByInternalName
+import io.michaelrocks.paranoid.processor.io.FileSink
+import io.michaelrocks.paranoid.processor.io.FileSource
 import io.michaelrocks.paranoid.processor.logging.getLogger
 import io.michaelrocks.paranoid.processor.model.Deobfuscator
 import org.objectweb.asm.ClassReader
 import org.objectweb.asm.ClassVisitor
 import org.objectweb.asm.ClassWriter
-import java.io.File
 
 class Patcher(
     private val deobfuscator: Deobfuscator,
@@ -34,27 +35,30 @@ class Patcher(
 ) {
   private val logger = getLogger()
 
-  fun copyAndPatchClasses(inputs: List<File>, outputs: List<File>) {
-    for (index in inputs.indices) {
-      copyAndPatchClasses(inputs[index], outputs[index])
+  fun copyAndPatchClasses(sourcesAndSinks: List<Pair<FileSource, FileSink>>) {
+    sourcesAndSinks.forEach { (source, sink) ->
+      copyAndPatchClasses(source, sink)
+      sink.flush()
     }
   }
 
-  private fun copyAndPatchClasses(inputPath: File, outputPath: File) {
+  private fun copyAndPatchClasses(source: FileSource, sink: FileSink) {
     logger.info("Patching...")
-    logger.info("   Input: {}", inputPath)
-    logger.info("  Output: {}", outputPath)
-    // FIXME: Support JARs here.
-    for (sourceFile in inputPath.walk()) {
-      val relativePath = sourceFile.toRelativeString(inputPath)
-      val targetFile = File(outputPath, relativePath)
-      if (sourceFile.isFile) {
-        getObjectTypeFromFile(relativePath)?.let { type ->
-          copyAndPatchClass(sourceFile, targetFile, type)
-        }
-      } else {
-        targetFile.mkdirs()
+    logger.info("   Input: {}", source)
+    logger.info("  Output: {}", sink)
+
+    source.listFiles { name, type ->
+      when (type) {
+        FileSource.EntryType.CLASS -> copyAndPatchClass(source, sink, name)
+        FileSource.EntryType.FILE -> source.copyFileTo(sink, name)
+        FileSource.EntryType.DIRECTORY -> sink.createDirectory(name)
       }
+    }
+  }
+
+  private fun copyAndPatchClass(source: FileSource, sink: FileSink, name: String) {
+    if (!maybePatchClass(source, sink, name)) {
+      source.copyFileTo(sink, name)
     }
   }
 
@@ -66,24 +70,20 @@ class Patcher(
     return null
   }
 
-  private fun copyAndPatchClass(sourceFile: File, targetFile: File, type: Type.Object) {
-    if (!maybePatchClass(sourceFile, targetFile, type)) {
-      sourceFile.parentFile.mkdirs()
-      sourceFile.copyTo(targetFile, true)
+  private fun maybePatchClass(source: FileSource, sink: FileSink, name: String): Boolean {
+    val type = getObjectTypeFromFile(name) ?: run {
+      logger.error("Skip patching for {}", name)
+      return false
     }
-  }
 
-  private fun maybePatchClass(sourceFile: File, targetFile: File, type: Type.Object): Boolean {
     val configuration = analysisResult.configurationsByType[type]
     val hasObfuscateAnnotation = OBFUSCATE_TYPE in classRegistry.getClassMirror(type).annotations
     if (configuration == null && !hasObfuscateAnnotation) {
       return false
     }
 
-    logger.debug("Patching class...")
-    logger.debug("  Source: {}", sourceFile)
-    logger.debug("  Target: {}", targetFile)
-    val reader = ClassReader(sourceFile.readBytes())
+    logger.debug("Patching class {}", name)
+    val reader = ClassReader(source.readFile(name))
     val writer = StandaloneClassWriter(ClassWriter.COMPUTE_MAXS or ClassWriter.COMPUTE_FRAMES, classRegistry)
     val patcher =
         writer
@@ -91,12 +91,15 @@ class Patcher(
             .wrapIf(configuration != null) { StringLiteralsClassPatcher(deobfuscator, stringRegistry, it) }
             .wrapIf(configuration != null) { StringConstantsClassPatcher(configuration!!, it) }
     reader.accept(patcher, ClassReader.SKIP_FRAMES)
-    targetFile.parentFile.mkdirs()
-    targetFile.writeBytes(writer.toByteArray())
+    sink.createFile(name, writer.toByteArray())
     return true
   }
 
   private inline fun ClassVisitor.wrapIf(condition: Boolean, wrapper: (ClassVisitor) -> ClassVisitor): ClassVisitor {
     return if (condition) wrapper(this) else this
+  }
+
+  private fun FileSource.copyFileTo(sink: FileSink, name: String) {
+    sink.createFile(name, readFile(name))
   }
 }
