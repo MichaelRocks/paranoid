@@ -19,6 +19,7 @@ package io.michaelrocks.paranoid.processor
 import io.michaelrocks.paranoid.processor.logging.getLogger
 import io.michaelrocks.paranoid.processor.model.Deobfuscator
 import java.io.File
+import java.util.Collections
 import javax.tools.DiagnosticCollector
 import javax.tools.JavaFileObject
 import javax.tools.StandardLocation
@@ -79,9 +80,11 @@ class Generator(
   private fun generateDeobfuscatorSourceCode(): String {
     val strings = stringRegistry.getAllStrings().toList()
     val joinedStrings = strings.joinToString(separator = "")
+    @Suppress("JavaCollectionsStaticMethod")
     val indexesByChar = joinedStrings
         .toHashSet()
-        .shuffled()
+        .toMutableList()
+        .also { Collections.shuffle(it) }
         .withIndex()
         .associateBy(
             { it.value },

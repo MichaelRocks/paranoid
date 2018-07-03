@@ -28,7 +28,10 @@ import io.michaelrocks.paranoid.processor.ParanoidProcessor
 import java.io.File
 import java.util.EnumSet
 
-class ParanoidTransform(private val android: BaseExtension) : Transform() {
+class ParanoidTransform(
+    private val paranoid: ParanoidExtension,
+    private val android: BaseExtension
+) : Transform() {
   override fun transform(invocation: TransformInvocation) {
     val inputs = invocation.inputs.flatMap { it.jarInputs + it.directoryInputs }
     val outputs = inputs.map { input ->
@@ -39,6 +42,11 @@ class ParanoidTransform(private val android: BaseExtension) : Transform() {
           input.scopes,
           format
       )
+    }
+
+    if (!paranoid.isEnabled) {
+      copyInputsToOutputs(inputs.map { it.file }, outputs)
+      return
     }
 
     val processor = ParanoidProcessor(
@@ -74,27 +82,34 @@ class ParanoidTransform(private val android: BaseExtension) : Transform() {
   }
 
   override fun getScopes(): MutableSet<in QualifiedContent.Scope> {
-    return EnumSet.of(QualifiedContent.Scope.PROJECT)
+    val scopes = EnumSet.of(QualifiedContent.Scope.PROJECT)
+    if (paranoid.includeSubprojects) {
+      scopes += QualifiedContent.Scope.SUB_PROJECTS
+    }
+    return scopes
   }
 
   override fun getReferencedScopes(): MutableSet<in QualifiedContent.Scope> {
-    if (PluginVersion.major >= 3) {
-      return EnumSet.of(
-          QualifiedContent.Scope.PROJECT,
-          QualifiedContent.Scope.SUB_PROJECTS,
-          QualifiedContent.Scope.EXTERNAL_LIBRARIES,
-          QualifiedContent.Scope.PROVIDED_ONLY
-      )
-    } else {
-      @Suppress("DEPRECATION")
-      return EnumSet.of(
-          QualifiedContent.Scope.PROJECT,
-          QualifiedContent.Scope.PROJECT_LOCAL_DEPS,
-          QualifiedContent.Scope.SUB_PROJECTS,
-          QualifiedContent.Scope.SUB_PROJECTS_LOCAL_DEPS,
-          QualifiedContent.Scope.PROVIDED_ONLY
-      )
+    val scopes =
+        if (PluginVersion.major >= 3) {
+          EnumSet.of(
+              QualifiedContent.Scope.PROJECT,
+              QualifiedContent.Scope.EXTERNAL_LIBRARIES,
+              QualifiedContent.Scope.PROVIDED_ONLY
+          )
+        } else {
+          @Suppress("DEPRECATION")
+          EnumSet.of(
+              QualifiedContent.Scope.PROJECT,
+              QualifiedContent.Scope.PROJECT_LOCAL_DEPS,
+              QualifiedContent.Scope.SUB_PROJECTS_LOCAL_DEPS,
+              QualifiedContent.Scope.PROVIDED_ONLY
+          )
+        }
+    if (!paranoid.includeSubprojects) {
+      scopes += QualifiedContent.Scope.SUB_PROJECTS
     }
+    return scopes
   }
 
   override fun isIncremental(): Boolean {
@@ -102,7 +117,11 @@ class ParanoidTransform(private val android: BaseExtension) : Transform() {
   }
 
   override fun getParameterInputs(): MutableMap<String, Any> {
-    return mutableMapOf("version" to Build.VERSION)
+    return mutableMapOf(
+        "version" to Build.VERSION,
+        "enabled" to paranoid.isEnabled,
+        "includeSubprojects" to paranoid.includeSubprojects
+    )
   }
 
   private fun TransformOutputProvider.getContentLocation(
@@ -112,5 +131,11 @@ class ParanoidTransform(private val android: BaseExtension) : Transform() {
       format: Format
   ): File {
     return getContentLocation(name, setOf(contentType), EnumSet.of(scope), format)
+  }
+
+  private fun copyInputsToOutputs(inputs: List<File>, outputs: List<File>) {
+    inputs.zip(outputs) { input, output ->
+      input.copyRecursively(output, overwrite = true)
+    }
   }
 }

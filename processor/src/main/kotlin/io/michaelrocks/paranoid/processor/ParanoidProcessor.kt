@@ -19,6 +19,8 @@ package io.michaelrocks.paranoid.processor
 import io.michaelrocks.grip.Grip
 import io.michaelrocks.grip.GripFactory
 import io.michaelrocks.grip.mirrors.getObjectTypeByInternalName
+import io.michaelrocks.paranoid.processor.commons.closeQuietly
+import io.michaelrocks.paranoid.processor.io.IoFactory
 import io.michaelrocks.paranoid.processor.logging.getLogger
 import io.michaelrocks.paranoid.processor.model.Deobfuscator
 import org.objectweb.asm.Type
@@ -51,8 +53,22 @@ class ParanoidProcessor(
 
     val deobfuscator = createDeobfuscator()
     logger.info("Prepare to generate {}", deobfuscator)
-    Patcher(deobfuscator, stringRegistry, analysisResult, grip.classRegistry).copyAndPatchClasses(inputs, outputs)
-    Generator(deobfuscator, stringRegistry).generateDeobfuscator(sourcePath, genPath, outputs + classpath, bootClasspath)
+
+    val sourcesAndSinks = inputs.zip(outputs) { input, output ->
+      IoFactory.createFileSource(input) to IoFactory.createFileSink(input, output)
+    }
+
+    try {
+      Patcher(deobfuscator, stringRegistry, analysisResult, grip.classRegistry)
+          .copyAndPatchClasses(sourcesAndSinks)
+      Generator(deobfuscator, stringRegistry)
+          .generateDeobfuscator(sourcePath, genPath, outputs + classpath, bootClasspath)
+    } finally {
+      sourcesAndSinks.forEach { (source, sink) ->
+        source.closeQuietly()
+        sink.closeQuietly()
+      }
+    }
   }
 
   private fun dumpConfiguration() {
