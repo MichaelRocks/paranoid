@@ -1,17 +1,17 @@
 apply plugin: 'com.android.library'
 
 android {
-  compileSdkVersion androidCompileSdkVersion
-  buildToolsVersion androidBuildToolsVersion
+    compileSdkVersion androidCompileSdkVersion
+    buildToolsVersion androidBuildToolsVersion
 
-  defaultConfig {
-    minSdkVersion androidMinSdkVersion
-    targetSdkVersion androidTargetSdkVersion
-    versionCode 1
-    versionName version
-  }
+    defaultConfig {
+        minSdkVersion androidMinSdkVersion
+        targetSdkVersion androidTargetSdkVersion
+        versionCode 1
+        versionName version
+    }
 }
 
 dependencies {
-  implementation "io.michaelrocks:paranoid-core:$version"
+    implementation "io.michaelrocks:paranoid-core:$version"
 }

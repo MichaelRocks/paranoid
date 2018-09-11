@@ -27,41 +27,41 @@ import org.objectweb.asm.ClassWriter
 import java.util.HashSet
 
 class StandaloneClassWriter : ClassWriter {
-  private val logger = getLogger()
-  private val classRegistry: ClassRegistry
+    private val logger = getLogger()
+    private val classRegistry: ClassRegistry
 
-  constructor(flags: Int, classRegistry: ClassRegistry) : super(flags) {
-    this.classRegistry = classRegistry
-  }
-
-  constructor(classReader: ClassReader, flags: Int, classRegistry: ClassRegistry) : super(classReader, flags) {
-    this.classRegistry = classRegistry
-  }
-
-  override fun getCommonSuperClass(type1: String, type2: String): String {
-    val hierarchy = HashSet<Type>()
-    for (mirror in classRegistry.findClassHierarchy(getObjectTypeByInternalName(type1))) {
-      hierarchy.add(mirror.type)
+    constructor(flags: Int, classRegistry: ClassRegistry) : super(flags) {
+        this.classRegistry = classRegistry
     }
 
-    for (mirror in classRegistry.findClassHierarchy(getObjectTypeByInternalName(type2))) {
-      if (mirror.type in hierarchy) {
-        logger.debug("[getCommonSuperClass]: {} & {} = {}", type1, type2, mirror.access)
-        return mirror.type.internalName
-      }
+    constructor(classReader: ClassReader, flags: Int, classRegistry: ClassRegistry) : super(classReader, flags) {
+        this.classRegistry = classRegistry
     }
 
-    logger.warn("[getCommonSuperClass]: {} & {} = NOT FOUND ", type1, type2)
-    return OBJECT_INTERNAL_NAME
-  }
+    override fun getCommonSuperClass(type1: String, type2: String): String {
+        val hierarchy = HashSet<Type>()
+        for (mirror in classRegistry.findClassHierarchy(getObjectTypeByInternalName(type1))) {
+            hierarchy.add(mirror.type)
+        }
 
-  private fun ClassRegistry.findClassHierarchy(type: Type.Object): Sequence<ClassMirror> {
-    return generateSequence(getClassMirror(type)) {
-      it.superType?.let { getClassMirror(it) }
+        for (mirror in classRegistry.findClassHierarchy(getObjectTypeByInternalName(type2))) {
+            if (mirror.type in hierarchy) {
+                logger.debug("[getCommonSuperClass]: {} & {} = {}", type1, type2, mirror.access)
+                return mirror.type.internalName
+            }
+        }
+
+        logger.warn("[getCommonSuperClass]: {} & {} = NOT FOUND ", type1, type2)
+        return OBJECT_INTERNAL_NAME
     }
-  }
 
-  companion object {
-    private val OBJECT_INTERNAL_NAME = getObjectType<Any>().internalName
-  }
+    private fun ClassRegistry.findClassHierarchy(type: Type.Object): Sequence<ClassMirror> {
+        return generateSequence(getClassMirror(type)) {
+            it.superType?.let { getClassMirror(it) }
+        }
+    }
+
+    companion object {
+        private val OBJECT_INTERNAL_NAME = getObjectType<Any>().internalName
+    }
 }

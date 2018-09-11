@@ -1,44 +1,44 @@
 allprojects {
-  group = 'io.michaelrocks'
-  version = '0.2.4'
+    group = 'io.michaelrocks'
+    version = '0.2.4'
 
-  ext.kotlinVersion = '1.2.50'
-  ext.pabloVersion = '1.0.2'
+    ext.kotlinVersion = '1.2.50'
+    ext.pabloVersion = '1.0.2'
 
-  ext.asmVersion = '6.1.1'
-  ext.gripVersion = '0.6.2-beta'
-  ext.logbackVersion = '1.2.3'
+    ext.asmVersion = '6.1.1'
+    ext.gripVersion = '0.6.2-beta'
+    ext.logbackVersion = '1.2.3'
 
-  ext.junitVersion = '4.12'
+    ext.junitVersion = '4.12'
 
-  ext.androidToolsVersion = '3.1.3'
-  ext.supportVersion = '27.1.1'
+    ext.androidToolsVersion = '3.1.3'
+    ext.supportVersion = '27.1.1'
 
-  ext.runnerVersion = '1.0.2'
-  ext.espressoVersion = '3.0.2'
+    ext.runnerVersion = '1.0.2'
+    ext.espressoVersion = '3.0.2'
 
-  ext.androidBuildToolsVersion = '27.0.3'
-  ext.androidCompileSdkVersion = 27
-  ext.androidMinSdkVersion = 16
-  ext.androidTargetSdkVersion = ext.androidCompileSdkVersion
+    ext.androidBuildToolsVersion = '27.0.3'
+    ext.androidCompileSdkVersion = 27
+    ext.androidMinSdkVersion = 16
+    ext.androidTargetSdkVersion = ext.androidCompileSdkVersion
 
-  buildscript {
+    buildscript {
+        repositories {
+            mavenLocal()
+            google()
+            jcenter()
+        }
+
+        dependencies {
+            classpath "com.android.tools.build:gradle:$androidToolsVersion"
+            classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlinVersion"
+            classpath "io.michaelrocks.pablo:pablo:$pabloVersion"
+        }
+    }
+
     repositories {
-      mavenLocal()
-      google()
-      jcenter()
+        mavenLocal()
+        google()
+        jcenter()
     }
-
-    dependencies {
-      classpath "com.android.tools.build:gradle:$androidToolsVersion"
-      classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlinVersion"
-      classpath "io.michaelrocks.pablo:pablo:$pabloVersion"
-    }
-  }
-
-  repositories {
-    mavenLocal()
-    google()
-    jcenter()
-  }
 }

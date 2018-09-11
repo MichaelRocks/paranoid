@@ -5,11 +5,11 @@ include ':processor'
 include ':gradle-plugin'
 
 if (!properties['bootstrap'].toBoolean()) {
-  include ':sample'
-  include ':processor-tests:all-chars-string'
-  include ':processor-tests:loads-of-strings'
-  include ':processor-tests:long-string'
-  include ':processor-tests:subproject'
-  include ':processor-tests:subproject-android'
-  include ':processor-tests:subproject-java'
+    include ':sample'
+    include ':processor-tests:all-chars-string'
+    include ':processor-tests:loads-of-strings'
+    include ':processor-tests:long-string'
+    include ':processor-tests:subproject'
+    include ':processor-tests:subproject-android'
+    include ':processor-tests:subproject-java'
 }

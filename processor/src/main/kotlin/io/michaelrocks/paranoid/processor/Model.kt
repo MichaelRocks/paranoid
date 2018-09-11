@@ -19,10 +19,10 @@ package io.michaelrocks.paranoid.processor
 import io.michaelrocks.grip.mirrors.Type
 
 data class AnalysisResult(
-    val configurationsByType: Map<Type.Object, ClassConfiguration>
+        val configurationsByType: Map<Type.Object, ClassConfiguration>
 )
 
 data class ClassConfiguration(
-    val container: Type.Object,
-    val constantStringsByFieldName: Map<String, String>
+        val container: Type.Object,
+        val constantStringsByFieldName: Map<String, String>
 )
