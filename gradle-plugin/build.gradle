@@ -6,58 +6,58 @@ targetCompatibility = JavaVersion.VERSION_1_6
 sourceCompatibility = JavaVersion.VERSION_1_6
 
 dependencies {
-  compileOnly gradleApi()
-  compileOnly "com.android.tools.build:gradle:$androidToolsVersion"
-  compileOnly "com.android.tools.build:gradle-api:$androidToolsVersion"
+    compileOnly gradleApi()
+    compileOnly "com.android.tools.build:gradle:$androidToolsVersion"
+    compileOnly "com.android.tools.build:gradle-api:$androidToolsVersion"
 
-  relocate project(':processor')
+    relocate project(':processor')
 
-  implementation "org.jetbrains.kotlin:kotlin-stdlib:$kotlinVersion"
+    implementation "org.jetbrains.kotlin:kotlin-stdlib:$kotlinVersion"
 }
 
 def generatedDir = new File(projectDir, "generated")
 def generatedJavaSourcesDir = new File(generatedDir, "main/java")
 
 task generateBuildClass {
-  inputs.property('version', version)
-  outputs.dir generatedDir
+    inputs.property('version', version)
+    outputs.dir generatedDir
 
-  doLast {
-    def buildClassFile = new File(generatedJavaSourcesDir, "io/michaelrocks/paranoid/plugin/Build.java")
-    buildClassFile.parentFile.mkdirs()
-    buildClassFile.text = "" +
-        "package io.michaelrocks.paranoid.plugin;\n" +
-        "\n" +
-        "public class Build {\n" +
-        "    public static final String VERSION = \"$version\";\n" +
-        "}\n"
-  }
+    doLast {
+        def buildClassFile = new File(generatedJavaSourcesDir, "io/michaelrocks/paranoid/plugin/Build.java")
+        buildClassFile.parentFile.mkdirs()
+        buildClassFile.text = "" +
+                "package io.michaelrocks.paranoid.plugin;\n" +
+                "\n" +
+                "public class Build {\n" +
+                "    public static final String VERSION = \"$version\";\n" +
+                "}\n"
+    }
 }
 
 sourceSets {
-  main {
-    java.srcDirs += generatedJavaSourcesDir
-  }
+    main {
+        java.srcDirs += generatedJavaSourcesDir
+    }
 }
 
 tasks.matching { it instanceof AbstractCompile }.forEach {
-  it.dependsOn tasks.generateBuildClass
+    it.dependsOn tasks.generateBuildClass
 }
 
 clean.doFirst {
-  delete generatedDir
+    delete generatedDir
 }
 
 idea {
-  module {
-    generatedSourceDirs += generatedJavaSourcesDir
-  }
+    module {
+        generatedSourceDirs += generatedJavaSourcesDir
+    }
 }
 
 shadowJar {
-  relocate 'io.michaelrocks.paranoid', 'io.michaelrocks.paranoid'
+    relocate 'io.michaelrocks.paranoid', 'io.michaelrocks.paranoid'
 }
 
 pablo {
-  repackage true
+    repackage true
 }

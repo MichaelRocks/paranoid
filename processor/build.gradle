@@ -5,23 +5,23 @@ sourceCompatibility = JavaVersion.VERSION_1_6
 targetCompatibility = JavaVersion.VERSION_1_6
 
 dependencies {
-  implementation project(':core')
-  implementation "org.jetbrains.kotlin:kotlin-stdlib:$kotlinVersion"
-  implementation "ch.qos.logback:logback-classic:$logbackVersion"
+    implementation project(':core')
+    implementation "org.jetbrains.kotlin:kotlin-stdlib:$kotlinVersion"
+    implementation "ch.qos.logback:logback-classic:$logbackVersion"
 
-  relocate "org.ow2.asm:asm:$asmVersion"
-  relocate "org.ow2.asm:asm-commons:$asmVersion"
-  relocate "io.michaelrocks:grip:$gripVersion"
+    relocate "org.ow2.asm:asm:$asmVersion"
+    relocate "org.ow2.asm:asm-commons:$asmVersion"
+    relocate "io.michaelrocks:grip:$gripVersion"
 
-  testImplementation "junit:junit:$junitVersion"
+    testImplementation "junit:junit:$junitVersion"
 }
 
 jar {
-  destinationDir = file('build/jar')
+    destinationDir = file('build/jar')
 }
 
 shadowJar {
-  relocate 'io.michaelrocks.paranoid', 'io.michaelrocks.paranoid'
-  relocate 'io.michaelrocks.grip', 'io.michaelrocks.paranoid.grip'
-  relocate 'org.objectweb.asm', 'io.michaelrocks.paranoid.asm'
+    relocate 'io.michaelrocks.paranoid', 'io.michaelrocks.paranoid'
+    relocate 'io.michaelrocks.grip', 'io.michaelrocks.paranoid.grip'
+    relocate 'org.objectweb.asm', 'io.michaelrocks.paranoid.asm'
 }
