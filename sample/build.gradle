@@ -19,7 +19,7 @@ android {
     versionCode 1
     versionName version
 
-    testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
+    testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
   }
 
   signingConfigs {
@@ -47,11 +47,12 @@ android {
 
 dependencies {
   implementation "org.jetbrains.kotlin:kotlin-stdlib:$kotlinVersion"
-  implementation "com.android.support:appcompat-v7:$supportVersion"
+  implementation "androidx.appcompat:appcompat:$androidxAppcompatVersion"
 
   testImplementation "junit:junit:$junitVersion"
 
-  androidTestImplementation "com.android.support.test:runner:$runnerVersion"
-  androidTestImplementation "com.android.support.test:rules:$runnerVersion"
-  androidTestImplementation "com.android.support.test.espresso:espresso-core:$espressoVersion"
+  androidTestImplementation "androidx.test:rules:$androidxRulesVersion"
+  androidTestImplementation "androidx.test:runner:$androidxRunnerVersion"
+  androidTestImplementation "androidx.test.ext:junit:$androidxTestExtJunitVersion"
+  androidTestImplementation "androidx.test.espresso:espresso-core:$androidxEspressoVersion"
 }
