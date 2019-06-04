@@ -19,7 +19,7 @@ android {
     versionCode 1
     versionName version
 
-    testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
+    testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
   }
 
   buildTypes {
@@ -35,9 +35,11 @@ dependencies {
 
   implementation "org.jetbrains.kotlin:kotlin-stdlib:$kotlinVersion"
 
-  androidTestImplementation "com.android.support.test:runner:$runnerVersion"
-  androidTestImplementation "com.android.support.test:rules:$runnerVersion"
-  androidTestImplementation "com.android.support.test.espresso:espresso-core:$espressoVersion"
+  androidTestImplementation "androidx.annotation:annotation:$androidxAnnotationVersion"
+  androidTestImplementation "androidx.test:rules:$androidxRulesVersion"
+  androidTestImplementation "androidx.test:runner:$androidxRunnerVersion"
+  androidTestImplementation "androidx.test.ext:junit:$androidxTestExtJunitVersion"
+  androidTestImplementation "androidx.test.espresso:espresso-core:$androidxEspressoVersion"
 }
 
 paranoid {
