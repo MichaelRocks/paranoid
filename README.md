@@ -18,7 +18,7 @@ buildscript {
   }
 
   dependencies {
-    classpath 'io.michaelrocks:paranoid-gradle-plugin:0.2.5'
+    classpath 'io.michaelrocks:paranoid-gradle-plugin:0.3.0'
   }
 }
 
@@ -92,7 +92,7 @@ public class MainActivity extends AppCompatActivity {
 
 License
 =======
-    Copyright 2016 Michael Rozumyanskiy
+    Copyright 2020 Michael Rozumyanskiy
 
     Licensed under the Apache License, Version 2.0 (the "License");
     you may not use this file except in compliance with the License.
