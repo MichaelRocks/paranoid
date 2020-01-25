@@ -1,5 +1,5 @@
 /*
- * Copyright 2018 Michael Rozumyanskiy
+ * Copyright 2020 Michael Rozumyanskiy
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -20,6 +20,7 @@ import io.michaelrocks.grip.Grip
 import io.michaelrocks.grip.GripFactory
 import io.michaelrocks.grip.mirrors.getObjectTypeByInternalName
 import io.michaelrocks.paranoid.processor.commons.closeQuietly
+import io.michaelrocks.paranoid.processor.io.DirectoryFileSink
 import io.michaelrocks.paranoid.processor.io.IoFactory
 import io.michaelrocks.paranoid.processor.logging.getLogger
 import io.michaelrocks.paranoid.processor.model.Deobfuscator
@@ -28,14 +29,14 @@ import org.objectweb.asm.commons.Method
 import java.io.File
 
 class ParanoidProcessor(
-    private val inputs: List<File>,
-    private val outputs: List<File>,
-    private val sourcePath: File,
-    private val genPath: File,
-    private val classpath: Collection<File>,
-    private val bootClasspath: Collection<File>,
-    private val projectName: String
+  private val inputs: List<File>,
+  private val outputs: List<File>,
+  private val genPath: File,
+  private val classpath: Collection<File>,
+  private val bootClasspath: Collection<File>,
+  private val projectName: String
 ) {
+
   private val logger = getLogger()
 
   private val grip: Grip = GripFactory.create(inputs + classpath + bootClasspath)
@@ -60,9 +61,12 @@ class ParanoidProcessor(
 
     try {
       Patcher(deobfuscator, stringRegistry, analysisResult, grip.classRegistry)
-          .copyAndPatchClasses(sourcesAndSinks)
-      Generator(deobfuscator, stringRegistry)
-          .generateDeobfuscator(sourcePath, genPath, outputs + classpath, bootClasspath)
+        .copyAndPatchClasses(sourcesAndSinks)
+      DirectoryFileSink(genPath).use { sink ->
+        val deobfuscatorBytes = DeobfuscatorGenerator(deobfuscator, stringRegistry, grip.classRegistry)
+          .generateDeobfuscator()
+        sink.createFile("${deobfuscator.type.internalName}.class", deobfuscatorBytes)
+      }
     } finally {
       sourcesAndSinks.forEach { (source, sink) ->
         source.closeQuietly()
@@ -75,7 +79,6 @@ class ParanoidProcessor(
     logger.info("Starting ParanoidProcessor:")
     logger.info("  inputs        = {}", inputs)
     logger.info("  outputs       = {}", outputs)
-    logger.info("  sourcePath    = {}", sourcePath)
     logger.info("  genPath       = {}", genPath)
     logger.info("  classpath     = {}", classpath)
     logger.info("  bootClasspath = {}", bootClasspath)
@@ -101,7 +104,7 @@ class ParanoidProcessor(
   private fun createDeobfuscator(): Deobfuscator {
     val deobfuscatorInternalName = "io/michaelrocks/paranoid/Deobfuscator${composeDeobfuscatorNameSuffix()}"
     val deobfuscatorType = getObjectTypeByInternalName(deobfuscatorInternalName)
-    val deobfuscationMethod = Method("getString", Type.getType(String::class.java), arrayOf(Type.INT_TYPE))
+    val deobfuscationMethod = Method("getString", Type.getType(String::class.java), arrayOf(Type.LONG_TYPE))
     return Deobfuscator(deobfuscatorType, deobfuscationMethod)
   }
 
@@ -110,7 +113,7 @@ class ParanoidProcessor(
     return if (normalizedProjectName.isEmpty() || normalizedProjectName.startsWith('$')) {
       normalizedProjectName
     } else {
-      '$' + normalizedProjectName
+      "$$normalizedProjectName"
     }
   }
 }

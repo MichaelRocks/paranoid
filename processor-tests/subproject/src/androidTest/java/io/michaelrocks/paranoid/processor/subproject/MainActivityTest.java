@@ -1,5 +1,5 @@
 /*
- * Copyright 2019 Michael Rozumyanskiy
+ * Copyright 2020 Michael Rozumyanskiy
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -19,46 +19,28 @@ package io.michaelrocks.paranoid.processor.subproject;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
-import java.lang.reflect.Method;
+import java.lang.reflect.Field;
 
-import androidx.annotation.NonNull;
 import androidx.test.ext.junit.runners.AndroidJUnit4;
 import androidx.test.filters.LargeTest;
 
-import static junit.framework.Assert.fail;
+import static junit.framework.Assert.assertEquals;
+import static junit.framework.Assert.assertNotNull;
+import static junit.framework.Assert.assertTrue;
 
 @RunWith(AndroidJUnit4.class)
 @LargeTest
 public class MainActivityTest {
   @Test
-  public void testMainActivityIsProcessed() {
-    assertDeobfuscatorContainsString("Subprojects: ");
-  }
+  public void testMainActivityIsProcessed() throws Exception {
+    final String suffix = BuildConfig.DEBUG ? "Debug" : "Release";
+    final Class<?> deobfuscatorClass = Class.forName("io.michaelrocks.paranoid.Deobfuscator$processortests$subproject$" + suffix);
+    final Field chunksField = deobfuscatorClass.getDeclaredField("chunks");
+    chunksField.setAccessible(true);
+    final String[] chunks = (String[]) chunksField.get(null);
 
-  @Test
-  public void testAndroidConstantsIsProcessed() {
-    assertDeobfuscatorContainsString("android");
-  }
-
-  @Test
-  public void testJavaConstantsIsProcessed() {
-    assertDeobfuscatorContainsString("java");
-  }
-
-  private void assertDeobfuscatorContainsString(@NonNull final String string) {
-    try {
-      final String suffix = BuildConfig.DEBUG ? "Debug" : "Release";
-      final Class<?> deobfuscatorClass =
-          Class.forName("io.michaelrocks.paranoid.Deobfuscator$processortests$subproject$" + suffix);
-      final Method deobfuscationMethod = deobfuscatorClass.getDeclaredMethod("getString", Integer.TYPE);
-      for (int i = 0; ; ++i) {
-        final String deobfuscatedString = (String) deobfuscationMethod.invoke(null, i);
-        if (string.equals(deobfuscatedString)) {
-          return;
-        }
-      }
-    } catch (final Throwable exception) {
-      fail("expected:<" + string + "> but was exception: <" + exception + ">");
-    }
+    assertNotNull(chunks);
+    assertEquals(1, chunks.length);
+    assertTrue(chunks[0].length() > "Subprojects: ".length() + "android".length() + "java".length());
   }
 }
