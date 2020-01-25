@@ -1,27 +1,27 @@
 allprojects {
   group = 'io.michaelrocks'
-  version = '0.2.5'
+  version = '0.3.0'
 
-  ext.kotlinVersion = '1.3.31'
+  ext.kotlinVersion = '1.3.61'
   ext.pabloVersion = '1.0.4'
 
-  ext.asmVersion = '7.1'
+  ext.asmVersion = '7.2'
   ext.gripVersion = '0.7.0-beta'
   ext.logbackVersion = '1.2.3'
 
   ext.junitVersion = '4.12'
 
-  ext.androidToolsVersion = '3.4.1'
-  ext.androidxAppcompatVersion = '1.0.2'
-  ext.androidxAnnotationVersion = '1.0.2'
+  ext.androidToolsVersion = '3.5.3'
+  ext.androidxAppcompatVersion = '1.1.0'
+  ext.androidxAnnotationVersion = '1.1.0'
 
   ext.androidxRulesVersion = '1.2.0'
   ext.androidxRunnerVersion = '1.2.0'
   ext.androidxTestExtJunitVersion = '1.1.1'
   ext.androidxEspressoVersion = '3.2.0'
 
-  ext.androidBuildToolsVersion = '28.0.3'
-  ext.androidCompileSdkVersion = 28
+  ext.androidBuildToolsVersion = '29.0.2'
+  ext.androidCompileSdkVersion = 29
   ext.androidMinSdkVersion = 16
   ext.androidTargetSdkVersion = ext.androidCompileSdkVersion
 
