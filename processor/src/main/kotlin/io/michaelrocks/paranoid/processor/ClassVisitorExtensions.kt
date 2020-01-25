@@ -16,10 +16,15 @@
 
 package io.michaelrocks.paranoid.processor
 
-import io.michaelrocks.grip.mirrors.getObjectType
-import io.michaelrocks.paranoid.DeobfuscatorHelper
-import io.michaelrocks.paranoid.Obfuscate
+import org.objectweb.asm.ClassVisitor
+import org.objectweb.asm.commons.GeneratorAdapter
+import org.objectweb.asm.commons.Method
 
-val OBJECT_TYPE = getObjectType<Any>()
-val OBFUSCATE_TYPE = getObjectType<Obfuscate>()
-val DEOBFUSCATOR_HELPER_TYPE = getObjectType<DeobfuscatorHelper>()
+inline fun ClassVisitor.newMethod(access: Int, method: Method, body: GeneratorAdapter.() -> Unit) {
+  GeneratorAdapter(access, method, null, null, this).apply {
+    visitCode()
+    body()
+    returnValue()
+    endMethod()
+  }
+}
