@@ -11,7 +11,7 @@ allprojects {
 
   ext.junitVersion = '4.12'
 
-  ext.androidToolsVersion = '3.5.2'
+  ext.androidToolsVersion = '3.5.3'
   ext.androidxAppcompatVersion = '1.1.0'
   ext.androidxAnnotationVersion = '1.1.0'
 
