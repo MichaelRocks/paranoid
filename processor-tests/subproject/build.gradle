@@ -44,4 +44,5 @@ dependencies {
 
 paranoid {
   includeSubprojects true
+  obfuscationSeed version.hashCode()
 }
