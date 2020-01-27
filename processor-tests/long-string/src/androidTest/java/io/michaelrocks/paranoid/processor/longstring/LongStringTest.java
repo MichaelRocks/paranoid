@@ -1,5 +1,5 @@
 /*
- * Copyright 2019 Michael Rozumyanskiy
+ * Copyright 2020 Michael Rozumyanskiy
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -22,13 +22,17 @@ import org.junit.runner.RunWith;
 import androidx.test.ext.junit.runners.AndroidJUnit4;
 import androidx.test.filters.LargeTest;
 
-import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
 
 @RunWith(AndroidJUnit4.class)
 @LargeTest
 public class LongStringTest {
   @Test
   public void testLongString() {
-    assertFalse(LongString.INSTANCE.getString().isEmpty());
+    assertEquals(65535, LongString.INSTANCE.getString().length());
+    assertTrue(LongString.INSTANCE.getString().startsWith("Lorem ipsum dolor sit amet, consectetur adipiscing elit."));
+    assertTrue(LongString.INSTANCE.getString().endsWith("Mauris eget ligula sit amet odio fringilla ultricies rutrum."));
+    assertTrue(LongString.INSTANCE.getString().contains("Pellentesque iaculis est quis massa faucibus, a volutpat magna sodales."));
   }
 }
