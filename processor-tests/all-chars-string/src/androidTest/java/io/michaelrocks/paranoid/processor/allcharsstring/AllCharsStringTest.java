@@ -1,5 +1,5 @@
 /*
- * Copyright 2019 Michael Rozumyanskiy
+ * Copyright 2020 Michael Rozumyanskiy
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -23,7 +23,6 @@ import androidx.test.ext.junit.runners.AndroidJUnit4;
 import androidx.test.filters.LargeTest;
 
 import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
 
 @RunWith(AndroidJUnit4.class)
 @LargeTest
@@ -31,7 +30,7 @@ public class AllCharsStringTest {
   @Test
   public void testAllCharsString() {
     final String string = AllCharString.INSTANCE.getString();
-    assertTrue(string.length() == 0x10000);
+    assertEquals(0x10000, string.length());
 
     for (int i = 0; i < string.length(); ++i) {
       assertEquals(i, string.charAt(i));
