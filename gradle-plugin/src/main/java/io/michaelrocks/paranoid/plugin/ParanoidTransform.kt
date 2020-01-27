@@ -26,6 +26,7 @@ import com.android.build.api.transform.TransformOutputProvider
 import com.android.build.gradle.BaseExtension
 import io.michaelrocks.paranoid.processor.ParanoidProcessor
 import java.io.File
+import java.security.SecureRandom
 import java.util.EnumSet
 
 class ParanoidTransform(
@@ -54,6 +55,7 @@ class ParanoidTransform(
     }
 
     val processor = ParanoidProcessor(
+        obfuscationSeed = paranoid.obfuscationSeed ?: SecureRandom().nextInt(),
         inputs = inputs.map { it.file },
         outputs = outputs,
         genPath = invocation.outputProvider.getContentLocation(
