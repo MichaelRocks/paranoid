@@ -121,11 +121,12 @@ class ParanoidTransform(
     return false
   }
 
-  override fun getParameterInputs(): MutableMap<String, Any> {
+  override fun getParameterInputs(): MutableMap<String, Any?> {
     return mutableMapOf(
         "version" to Build.VERSION,
         "enabled" to paranoid.isEnabled,
-        "includeSubprojects" to paranoid.includeSubprojects
+        "includeSubprojects" to paranoid.includeSubprojects,
+        "obfuscationSeed" to paranoid.obfuscationSeed
     )
   }
 
