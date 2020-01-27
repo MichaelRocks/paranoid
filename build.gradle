@@ -9,7 +9,7 @@ allprojects {
   ext.gripVersion = '0.7.0-beta'
   ext.logbackVersion = '1.2.3'
 
-  ext.junitVersion = '4.12'
+  ext.junitVersion = '4.13'
 
   ext.androidToolsVersion = '3.5.3'
   ext.androidxAppcompatVersion = '1.1.0'
