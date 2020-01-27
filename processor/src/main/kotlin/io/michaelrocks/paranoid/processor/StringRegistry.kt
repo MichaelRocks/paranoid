@@ -18,8 +18,6 @@ package io.michaelrocks.paranoid.processor
 
 import io.michaelrocks.paranoid.DeobfuscatorHelper
 import io.michaelrocks.paranoid.RandomHelper
-import java.security.SecureRandom
-import java.util.Random
 
 interface StringRegistry {
   fun registerString(string: String): Long
@@ -27,13 +25,13 @@ interface StringRegistry {
 }
 
 class StringRegistryImpl(
-  private val random: Random = SecureRandom()
+  seed: Int
 ) : StringRegistry {
 
+  private val seed = seed.toLong() and 0xffff_ffffL
   private val builder = StringBuilder()
 
   override fun registerString(string: String): Long {
-    val seed = random.nextInt().toLong() and 0xffff_ffffL
     var mask = 0L
     var state = RandomHelper.seed(seed)
     state = RandomHelper.next(state)

@@ -29,6 +29,7 @@ import org.objectweb.asm.commons.Method
 import java.io.File
 
 class ParanoidProcessor(
+  private val obfuscationSeed: Int,
   private val inputs: List<File>,
   private val outputs: List<File>,
   private val genPath: File,
@@ -40,7 +41,7 @@ class ParanoidProcessor(
   private val logger = getLogger()
 
   private val grip: Grip = GripFactory.create(inputs + classpath + bootClasspath)
-  private val stringRegistry = StringRegistryImpl()
+  private val stringRegistry = StringRegistryImpl(obfuscationSeed)
 
   fun process() {
     dumpConfiguration()
