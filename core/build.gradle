@@ -5,5 +5,5 @@ sourceCompatibility = JavaVersion.VERSION_1_6
 targetCompatibility = JavaVersion.VERSION_1_6
 
 jar {
-  destinationDir = file('build/jar')
+  destinationDirectory.set(file('build/jar'))
 }

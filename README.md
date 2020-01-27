@@ -18,7 +18,7 @@ buildscript {
   }
 
   dependencies {
-    classpath 'io.michaelrocks:paranoid-gradle-plugin:0.3.0'
+    classpath 'io.michaelrocks:paranoid-gradle-plugin:0.3.1'
   }
 }
 
@@ -41,7 +41,9 @@ paranoid {
 
 The extension object contains the following properties:
 - `enabled` — `boolean`. Allows to disable obfuscation for the project. Default value is `true`.  
-- `includeSubprojects` — `boolean`. Allows to enable obfuscation for subprojects. Default value is `false`.  
+- `includeSubprojects` — `boolean`. Allows to enable obfuscation for subprojects. Default value is `false`.
+- `obfuscationSeed` - `Integer`. A seed that can be used to make obfuscation stable across builds.
+  Default value is `null`, which means that the seed is randomly generated on each build.
 
 How it works
 ------------

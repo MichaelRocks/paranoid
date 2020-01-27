@@ -1,5 +1,5 @@
 /*
- * Copyright 2018 Michael Rozumyanskiy
+ * Copyright 2020 Michael Rozumyanskiy
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -19,4 +19,5 @@ package io.michaelrocks.paranoid.plugin
 open class ParanoidExtension {
   var isEnabled: Boolean = true
   var includeSubprojects: Boolean = false
+  var obfuscationSeed: Int? = null
 }

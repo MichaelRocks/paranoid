@@ -17,7 +17,7 @@ dependencies {
 }
 
 jar {
-  destinationDir = file('build/jar')
+  destinationDirectory.set(file('build/jar'))
 }
 
 shadowJar {
