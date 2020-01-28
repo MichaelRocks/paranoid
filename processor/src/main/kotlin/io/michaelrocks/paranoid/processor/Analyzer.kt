@@ -1,5 +1,5 @@
 /*
- * Copyright 2018 Michael Rozumyanskiy
+ * Copyright 2020 Michael Rozumyanskiy
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -32,8 +32,8 @@ class Analyzer(private val grip: Grip) {
   fun analyze(inputs: List<File>): AnalysisResult {
     val typesToObfuscate = findTypesToObfuscate(inputs)
     val obfuscationConfigurationsByType = typesToObfuscate.associateBy(
-        { it },
-        { createObfuscationConfiguration(it) }
+      { it },
+      { createObfuscationConfiguration(it) }
     )
     return AnalysisResult(obfuscationConfigurationsByType)
   }
@@ -47,8 +47,8 @@ class Analyzer(private val grip: Grip) {
   private fun createObfuscationConfiguration(type: Type.Object): ClassConfiguration {
     val fields = findConstantStringFields(type)
     val stringConstantsByName = fields.associateBy(
-        { it.name },
-        { it.value as String }
+      { it.name },
+      { it.value as String }
     )
     return ClassConfiguration(type, stringConstantsByName)
   }

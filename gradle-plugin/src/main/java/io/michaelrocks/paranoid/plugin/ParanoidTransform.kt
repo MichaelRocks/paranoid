@@ -30,9 +30,10 @@ import java.security.SecureRandom
 import java.util.EnumSet
 
 class ParanoidTransform(
-    private val paranoid: ParanoidExtension,
-    private val android: BaseExtension
+  private val paranoid: ParanoidExtension,
+  private val android: BaseExtension
 ) : Transform() {
+
   override fun transform(invocation: TransformInvocation) {
     if (!invocation.isIncremental) {
       invocation.outputProvider.deleteAll()
@@ -42,10 +43,10 @@ class ParanoidTransform(
     val outputs = inputs.map { input ->
       val format = if (input is JarInput) Format.JAR else Format.DIRECTORY
       invocation.outputProvider.getContentLocation(
-          input.name,
-          input.contentTypes,
-          input.scopes,
-          format
+        input.name,
+        input.contentTypes,
+        input.scopes,
+        format
       )
     }
 
@@ -55,20 +56,20 @@ class ParanoidTransform(
     }
 
     val processor = ParanoidProcessor(
-        obfuscationSeed = paranoid.obfuscationSeed ?: SecureRandom().nextInt(),
-        inputs = inputs.map { it.file },
-        outputs = outputs,
-        genPath = invocation.outputProvider.getContentLocation(
-            "gen-paranoid",
-            QualifiedContent.DefaultContentType.CLASSES,
-            QualifiedContent.Scope.PROJECT,
-            Format.DIRECTORY
-        ),
-        classpath = invocation.referencedInputs.flatMap {
-          it.jarInputs.map { it.file } + it.directoryInputs.map { it.file }
-        },
-        bootClasspath = android.bootClasspath,
-        projectName = invocation.context.path.replace(":transformClassesWithParanoidFor", ":").replace(':', '$')
+      obfuscationSeed = paranoid.obfuscationSeed ?: SecureRandom().nextInt(),
+      inputs = inputs.map { it.file },
+      outputs = outputs,
+      genPath = invocation.outputProvider.getContentLocation(
+        "gen-paranoid",
+        QualifiedContent.DefaultContentType.CLASSES,
+        QualifiedContent.Scope.PROJECT,
+        Format.DIRECTORY
+      ),
+      classpath = invocation.referencedInputs.flatMap {
+        it.jarInputs.map { it.file } + it.directoryInputs.map { it.file }
+      },
+      bootClasspath = android.bootClasspath,
+      projectName = invocation.context.path.replace(":transformClassesWithParanoidFor", ":").replace(':', '$')
     )
 
     try {
@@ -96,21 +97,21 @@ class ParanoidTransform(
 
   override fun getReferencedScopes(): MutableSet<in QualifiedContent.Scope> {
     val scopes =
-        if (PluginVersion.major >= 3) {
-          EnumSet.of(
-              QualifiedContent.Scope.PROJECT,
-              QualifiedContent.Scope.EXTERNAL_LIBRARIES,
-              QualifiedContent.Scope.PROVIDED_ONLY
-          )
-        } else {
-          @Suppress("DEPRECATION")
-          EnumSet.of(
-              QualifiedContent.Scope.PROJECT,
-              QualifiedContent.Scope.PROJECT_LOCAL_DEPS,
-              QualifiedContent.Scope.SUB_PROJECTS_LOCAL_DEPS,
-              QualifiedContent.Scope.PROVIDED_ONLY
-          )
-        }
+      if (PluginVersion.major >= 3) {
+        EnumSet.of(
+          QualifiedContent.Scope.PROJECT,
+          QualifiedContent.Scope.EXTERNAL_LIBRARIES,
+          QualifiedContent.Scope.PROVIDED_ONLY
+        )
+      } else {
+        @Suppress("DEPRECATION")
+        EnumSet.of(
+          QualifiedContent.Scope.PROJECT,
+          QualifiedContent.Scope.PROJECT_LOCAL_DEPS,
+          QualifiedContent.Scope.SUB_PROJECTS_LOCAL_DEPS,
+          QualifiedContent.Scope.PROVIDED_ONLY
+        )
+      }
     if (!paranoid.includeSubprojects) {
       scopes += QualifiedContent.Scope.SUB_PROJECTS
     }
@@ -123,18 +124,18 @@ class ParanoidTransform(
 
   override fun getParameterInputs(): MutableMap<String, Any?> {
     return mutableMapOf(
-        "version" to Build.VERSION,
-        "enabled" to paranoid.isEnabled,
-        "includeSubprojects" to paranoid.includeSubprojects,
-        "obfuscationSeed" to paranoid.obfuscationSeed
+      "version" to Build.VERSION,
+      "enabled" to paranoid.isEnabled,
+      "includeSubprojects" to paranoid.includeSubprojects,
+      "obfuscationSeed" to paranoid.obfuscationSeed
     )
   }
 
   private fun TransformOutputProvider.getContentLocation(
-      name: String,
-      contentType: QualifiedContent.ContentType,
-      scope: QualifiedContent.Scope,
-      format: Format
+    name: String,
+    contentType: QualifiedContent.ContentType,
+    scope: QualifiedContent.Scope,
+    format: Format
   ): File {
     return getContentLocation(name, setOf(contentType), EnumSet.of(scope), format)
   }

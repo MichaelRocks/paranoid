@@ -1,5 +1,5 @@
 /*
- * Copyright 2019 Michael Rozumyanskiy
+ * Copyright 2020 Michael Rozumyanskiy
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -42,13 +42,13 @@ class MainActivity : AppCompatActivity() {
     showDialogButton.setOnClickListener {
       Toast.makeText(this@MainActivity, "Button clicked", Toast.LENGTH_SHORT).show()
       AlertDialog.Builder(this@MainActivity)
-          .setTitle("Title")
-          .setMessage("Message 2")
-          .setPositiveButton("Close") { dialog, _ ->
-            Toast.makeText(this@MainActivity, "Dialog dismissed", Toast.LENGTH_SHORT).show()
-            dialog.dismiss()
-          }
-          .show()
+        .setTitle("Title")
+        .setMessage("Message 2")
+        .setPositiveButton("Close") { dialog, _ ->
+          Toast.makeText(this@MainActivity, "Dialog dismissed", Toast.LENGTH_SHORT).show()
+          dialog.dismiss()
+        }
+        .show()
     }
   }
 

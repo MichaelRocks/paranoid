@@ -1,5 +1,5 @@
 /*
- * Copyright 2018 Michael Rozumyanskiy
+ * Copyright 2020 Michael Rozumyanskiy
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -22,8 +22,9 @@ import io.michaelrocks.grip.mirrors.Type
 import io.michaelrocks.grip.mirrors.getObjectTypeByInternalName
 
 class ObfuscatedTypeRegistryImpl(
-    private val classRegistry: ClassRegistry
+  private val classRegistry: ClassRegistry
 ) : ObfuscatedTypeRegistry {
+
   override fun shouldObfuscate(type: Type.Object): Boolean {
     val mirror = findClassMirror(type) ?: return false
     if (OBFUSCATE_TYPE in mirror.annotations) {

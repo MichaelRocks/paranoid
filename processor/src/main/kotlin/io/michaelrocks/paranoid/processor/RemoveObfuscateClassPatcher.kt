@@ -1,5 +1,5 @@
 /*
- * Copyright 2018 Michael Rozumyanskiy
+ * Copyright 2020 Michael Rozumyanskiy
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -21,8 +21,9 @@ import org.objectweb.asm.ClassVisitor
 import org.objectweb.asm.Opcodes
 
 class RemoveObfuscateClassPatcher(
-    delegate: ClassVisitor
+  delegate: ClassVisitor
 ) : ClassVisitor(Opcodes.ASM5, delegate) {
+
   private val obfuscateDescriptor = OBFUSCATE_TYPE.descriptor
 
   override fun visitAnnotation(desc: String, visible: Boolean): AnnotationVisitor? {
