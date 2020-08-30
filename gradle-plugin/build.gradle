@@ -57,7 +57,3 @@ idea {
 shadowJar {
   relocate 'io.michaelrocks.paranoid', 'io.michaelrocks.paranoid'
 }
-
-pablo {
-  repackage true
-}
