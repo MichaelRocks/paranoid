@@ -1,5 +1,5 @@
 /*
- * Copyright 2018 Michael Rozumyanskiy
+ * Copyright 2020 Michael Rozumyanskiy
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -21,6 +21,7 @@ import org.gradle.api.GradleException
 import org.gradle.api.Plugin
 import org.gradle.api.Project
 import org.gradle.api.UnknownDomainObjectException
+import org.gradle.api.plugins.JavaPlugin
 
 class ParanoidPlugin : Plugin<Project> {
   private lateinit var extension: ParanoidExtension
@@ -38,7 +39,7 @@ class ParanoidPlugin : Plugin<Project> {
   }
 
   private fun getDefaultConfiguration(): String {
-    return if (PluginVersion.major >= 3) "implementation" else "compile"
+    return JavaPlugin.IMPLEMENTATION_CONFIGURATION_NAME
   }
 
   private fun Project.addDependencies(configurationName: String) {

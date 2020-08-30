@@ -96,22 +96,11 @@ class ParanoidTransform(
   }
 
   override fun getReferencedScopes(): MutableSet<in QualifiedContent.Scope> {
-    val scopes =
-      if (PluginVersion.major >= 3) {
-        EnumSet.of(
-          QualifiedContent.Scope.PROJECT,
-          QualifiedContent.Scope.EXTERNAL_LIBRARIES,
-          QualifiedContent.Scope.PROVIDED_ONLY
-        )
-      } else {
-        @Suppress("DEPRECATION")
-        EnumSet.of(
-          QualifiedContent.Scope.PROJECT,
-          QualifiedContent.Scope.PROJECT_LOCAL_DEPS,
-          QualifiedContent.Scope.SUB_PROJECTS_LOCAL_DEPS,
-          QualifiedContent.Scope.PROVIDED_ONLY
-        )
-      }
+    val scopes = EnumSet.of(
+      QualifiedContent.Scope.EXTERNAL_LIBRARIES,
+      QualifiedContent.Scope.PROVIDED_ONLY
+    )
+
     if (!paranoid.includeSubprojects) {
       scopes += QualifiedContent.Scope.SUB_PROJECTS
     }
