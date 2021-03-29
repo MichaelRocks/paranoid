@@ -1,5 +1,5 @@
 apply plugin: 'kotlin'
-apply plugin: 'io.michaelrocks.pablo'
+apply from: "$rootDir/pablo.gradle"
 
 sourceCompatibility = javaVersion
 targetCompatibility = javaVersion
@@ -20,8 +20,10 @@ jar {
   destinationDirectory.set(file('build/jar'))
 }
 
-shadowJar {
-  relocate 'io.michaelrocks.paranoid', 'io.michaelrocks.paranoid'
-  relocate 'io.michaelrocks.grip', 'io.michaelrocks.paranoid.grip'
-  relocate 'org.objectweb.asm', 'io.michaelrocks.paranoid.asm'
+pablo {
+  shadow {
+    relocate 'io.michaelrocks.paranoid'
+    relocate 'io.michaelrocks.grip', 'io.michaelrocks.paranoid.grip'
+    relocate 'org.objectweb.asm', 'io.michaelrocks.paranoid.asm'
+  }
 }

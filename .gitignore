@@ -31,3 +31,6 @@ proguard/
 
 # Gradle Wrapper
 !gradle/wrapper/gradle-wrapper.jar
+
+# Pablo
+pablo.properties

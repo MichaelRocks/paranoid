@@ -1,5 +1,4 @@
 apply plugin: 'kotlin'
-apply plugin: 'io.michaelrocks.pablo'
 apply plugin: 'idea'
 apply from: "$rootDir/pablo.gradle"
 
@@ -55,10 +54,8 @@ idea {
   }
 }
 
-shadowJar {
-  relocate 'io.michaelrocks.paranoid', 'io.michaelrocks.paranoid'
-}
-
 pablo {
-  repackage true
+  shadow {
+    relocate 'io.michaelrocks.paranoid'
+  }
 }
