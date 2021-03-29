@@ -4,7 +4,7 @@ allprojects {
 
   ext.javaVersion = JavaVersion.VERSION_1_8
   ext.kotlinVersion = '1.4.31'
-  ext.pabloVersion = '1.1.0'
+  ext.pabloVersion = '1.1.1'
 
   ext.asmVersion = '9.1'
   ext.gripVersion = '0.7.1-beta'

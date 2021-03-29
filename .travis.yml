@@ -27,7 +27,7 @@ before_install:
   - yes | sdkmanager "platforms;android-30"
 
 install:
-  - ./gradlew assemble publishToMavenLocal -Pbootstrap=true --no-daemon --rerun-tasks
+  - ./gradlew assemble publishToMavenLocal -Pbootstrap=true -Ppablo.signing.enabled=false --no-daemon --rerun-tasks
 
 script:
   - ./gradlew check --no-daemon
