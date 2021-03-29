@@ -16,15 +16,15 @@ dependencies {
   implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk8:$kotlinVersion"
 }
 
-def generatedDir = new File(projectDir, "generated")
-def generatedJavaSourcesDir = new File(generatedDir, "main/java")
+final File generatedDir = new File(projectDir, "generated")
+final File generatedJavaSourcesDir = new File(generatedDir, "main/java")
 
 task generateBuildClass {
   inputs.property('version', version)
   outputs.dir generatedDir
 
   doLast {
-    def buildClassFile = new File(generatedJavaSourcesDir, "io/michaelrocks/paranoid/plugin/Build.java")
+    final File buildClassFile = new File(generatedJavaSourcesDir, "io/michaelrocks/paranoid/plugin/Build.java")
     buildClassFile.parentFile.mkdirs()
     buildClassFile.text = "" +
         "package io.michaelrocks.paranoid.plugin;\n" +
