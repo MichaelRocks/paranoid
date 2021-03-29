@@ -5,11 +5,11 @@ android:
     - tools
     - tools
     - platform-tools
-    - build-tools-29.0.2
-    - android-29
+    - build-tools-30.0.3
+    - android-30
 
 jdk:
-  - oraclejdk8
+  - openjdk8
 
 sudo: false
 
@@ -24,7 +24,7 @@ cache:
     - $HOME/.gradle/wrapper/
 
 before_install:
-  - yes | sdkmanager "platforms;android-29"
+  - yes | sdkmanager "platforms;android-30"
 
 install:
   - ./gradlew assemble publishToMavenLocal -Pbootstrap=true --no-daemon --rerun-tasks
