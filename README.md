@@ -14,7 +14,7 @@ plugin.
 ```groovy
 buildscript {
   repositories {
-    jcenter()
+    mavenCentral()
   }
 
   dependencies {
