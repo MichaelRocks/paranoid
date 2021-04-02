@@ -1,6 +1,9 @@
 name: Build
 on: [push, pull_request]
 
+env:
+  GRADLE_OPTS: "-Dorg.gradle.jvmargs=-Xmx4g -Dorg.gradle.daemon=false -Dkotlin.incremental=false"
+
 jobs:
   build:
     name: Build and test
@@ -20,11 +23,10 @@ jobs:
           java-version: 8
 
       - name: Publish bootstrap artifacts
-        run: ./gradlew assemble publishToMavenLocal -Pbootstrap=true -Ppablo.signing.enabled=false --no-daemon --rerun-tasks
+        run: ./gradlew assemble publishToMavenLocal -Pbootstrap=true -Ppablo.signing.enabled=false --rerun-tasks
 
-        # Skip unit tests for now. Seems free build machines are too restricted to compile them.
-        # - name: Run unit tests
-        #   run: ./gradlew check --no-daemon
+      - name: Run unit tests
+        run: ./gradlew check
 
       - name: Run integration tests
         uses: reactivecircus/android-emulator-runner@v2
@@ -32,4 +34,4 @@ jobs:
           api-level: ${{ matrix.api-level }}
           target: ${{ matrix.target }}
           arch: ${{ matrix.arch }}
-          script: ./gradlew connectedCheck --no-daemon
+          script: ./gradlew connectedCheck
