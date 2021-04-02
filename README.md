@@ -1,4 +1,4 @@
-[![Build Status](https://travis-ci.org/MichaelRocks/paranoid.svg?branch=master)](https://travis-ci.org/MichaelRocks/paranoid)
+[![Build](https://github.com/MichaelRocks/paranoid/actions/workflows/build.yml/badge.svg)](https://github.com/MichaelRocks/paranoid/actions/workflows/build.yml)
 
 Paranoid
 ========
