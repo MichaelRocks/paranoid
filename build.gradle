@@ -12,7 +12,7 @@ allprojects {
 
   ext.junitVersion = '4.13.2'
 
-  ext.androidToolsVersion = '4.1.3'
+  ext.androidToolsVersion = '4.2.0-beta06'
   ext.androidxAppcompatVersion = '1.2.0'
   ext.androidxAnnotationVersion = '1.2.0'
 
@@ -30,7 +30,7 @@ allprojects {
     repositories {
       google()
       mavenLocal()
-      jcenter()
+      mavenCentral()
     }
 
     dependencies {
@@ -43,6 +43,6 @@ allprojects {
   repositories {
     google()
     mavenLocal()
-    jcenter()
+    mavenCentral()
   }
 }
