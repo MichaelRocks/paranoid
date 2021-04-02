@@ -33,7 +33,7 @@ dependencies {
   implementation project(":processor-tests:subproject-android")
   implementation project(":processor-tests:subproject-java")
 
-  implementation "org.jetbrains.kotlin:kotlin-stdlib:$kotlinVersion"
+  implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk8:$kotlinVersion"
 
   androidTestImplementation "androidx.annotation:annotation:$androidxAnnotationVersion"
   androidTestImplementation "androidx.test:rules:$androidxRulesVersion"
