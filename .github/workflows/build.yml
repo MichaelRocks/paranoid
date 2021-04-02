@@ -7,7 +7,7 @@ jobs:
     runs-on: macos-latest
     strategy:
       matrix:
-        api-level: [21, 30]
+        api-level: [21]
         target: [default]
         arch: [x86_64]
 
