@@ -100,7 +100,7 @@ In case you develop an Android library and use this repository, add this into th
 implementation("io.michaelrocks:paranoid-core:0.3.3")
 ```
 
-More explanation about this can be found [here]](https://github.com/MichaelRocks/paranoid/issues/38) 
+More explanation about this can be found [here](https://github.com/MichaelRocks/paranoid/issues/38) 
 
 License
 =======
