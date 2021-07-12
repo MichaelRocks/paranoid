@@ -1,5 +1,5 @@
 /*
- * Copyright 2018 Michael Rozumyanskiy
+ * Copyright 2021 Michael Rozumyanskiy
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -23,27 +23,27 @@ import org.objectweb.asm.FieldVisitor
 import org.objectweb.asm.MethodVisitor
 import org.objectweb.asm.Opcodes.ACC_PRIVATE
 import org.objectweb.asm.Opcodes.ACC_STATIC
-import org.objectweb.asm.Opcodes.ASM5
+import org.objectweb.asm.Opcodes.ASM9
 import org.objectweb.asm.Type
 import org.objectweb.asm.commons.GeneratorAdapter
 import org.objectweb.asm.commons.Method
 
 class StringConstantsClassPatcher(
-    private val configuration: ClassConfiguration,
-    delegate: ClassVisitor
-) : ClassVisitor(ASM5, delegate) {
+  private val configuration: ClassConfiguration,
+  delegate: ClassVisitor
+) : ClassVisitor(ASM9, delegate) {
 
   private val logger = getLogger()
 
   private var isStaticInitializerPatched = false
 
   override fun visit(
-      version: Int,
-      access: Int,
-      name: String,
-      signature: String?,
-      superName: String?,
-      interfaces: Array<out String>?
+    version: Int,
+    access: Int,
+    name: String,
+    signature: String?,
+    superName: String?,
+    interfaces: Array<out String>?
   ) {
     super.visit(version, access, name, signature, superName, interfaces)
     isStaticInitializerPatched = configuration.constantStringsByFieldName.isEmpty()
@@ -55,11 +55,11 @@ class StringConstantsClassPatcher(
   }
 
   override fun visitMethod(
-      access: Int,
-      name: String,
-      desc: String,
-      signature: String?,
-      exceptions: Array<out String>?
+    access: Int,
+    name: String,
+    desc: String,
+    signature: String?,
+    exceptions: Array<out String>?
   ): MethodVisitor {
     val visitor = super.visitMethod(access, name, desc, signature, exceptions)
     if (name == STATIC_INITIALIZER_METHOD.name) {
@@ -82,14 +82,14 @@ class StringConstantsClassPatcher(
   }
 
   private fun createStaticInitializerPatcher(
-      visitor: MethodVisitor,
-      access: Int,
-      name: String,
-      desc: String
+    visitor: MethodVisitor,
+    access: Int,
+    name: String,
+    desc: String
   ): MethodVisitor {
     if (!isStaticInitializerPatched) {
       isStaticInitializerPatched = true
-      return object : GeneratorAdapter(ASM5, visitor, access, name, desc) {
+      return object : GeneratorAdapter(ASM9, visitor, access, name, desc) {
         override fun visitCode() {
           logger.info("{}:", configuration.container.internalName)
           logger.info("  Patching <clinit>...")

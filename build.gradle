@@ -1,25 +1,25 @@
 allprojects {
   group = 'io.michaelrocks'
-  version = '0.3.3'
+  version = '0.3.4'
 
   ext.javaVersion = JavaVersion.VERSION_1_8
-  ext.kotlinVersion = '1.4.31'
-  ext.pabloVersion = '1.1.1'
+  ext.kotlinVersion = '1.5.20'
+  ext.pabloVersion = '1.3.1'
 
-  ext.asmVersion = '9.1'
+  ext.asmVersion = '9.2'
   ext.gripVersion = '0.7.1-beta'
   ext.logbackVersion = '1.2.3'
 
   ext.junitVersion = '4.13.2'
 
-  ext.androidToolsVersion = '4.1.3'
-  ext.androidxAppcompatVersion = '1.2.0'
+  ext.androidToolsVersion = '4.2.1'
+  ext.androidxAppcompatVersion = '1.3.0'
   ext.androidxAnnotationVersion = '1.2.0'
 
-  ext.androidxRulesVersion = '1.3.0'
-  ext.androidxRunnerVersion = '1.3.0'
-  ext.androidxTestExtJunitVersion = '1.1.2'
-  ext.androidxEspressoVersion = '3.3.0'
+  ext.androidxRulesVersion = '1.4.0'
+  ext.androidxRunnerVersion = '1.4.0'
+  ext.androidxTestExtJunitVersion = '1.1.3'
+  ext.androidxEspressoVersion = '3.4.0'
 
   ext.androidBuildToolsVersion = '30.0.3'
   ext.androidCompileSdkVersion = 30
@@ -30,7 +30,7 @@ allprojects {
     repositories {
       google()
       mavenLocal()
-      jcenter()
+      mavenCentral()
     }
 
     dependencies {
@@ -43,6 +43,6 @@ allprojects {
   repositories {
     google()
     mavenLocal()
-    jcenter()
+    mavenCentral()
   }
 }

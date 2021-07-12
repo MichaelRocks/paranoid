@@ -1,5 +1,5 @@
 /*
- * Copyright 2018 Michael Rozumyanskiy
+ * Copyright 2020 Michael Rozumyanskiy
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -20,22 +20,22 @@ import java.io.File
 
 object IoFactory : FileSource.Factory, FileSink.Factory {
   override fun createFileSource(inputFile: File): FileSource =
-      inputFile.run {
-        when (fileType) {
-          FileType.EMPTY -> EmptyFileSource
-          FileType.DIRECTORY -> DirectoryFileSource(this)
-          FileType.JAR -> JarFileSource(this)
-        }
+    inputFile.run {
+      when (fileType) {
+        FileType.EMPTY -> EmptyFileSource
+        FileType.DIRECTORY -> DirectoryFileSource(this)
+        FileType.JAR -> JarFileSource(this)
       }
+    }
 
   override fun createFileSink(inputFile: File, outputFile: File): FileSink =
-      outputFile.run {
-        when (inputFile.fileType) {
-          FileType.EMPTY -> EmptyFileSink
-          FileType.DIRECTORY -> DirectoryFileSink(this)
-          FileType.JAR -> JarFileSink(this)
-        }
+    outputFile.run {
+      when (inputFile.fileType) {
+        FileType.EMPTY -> EmptyFileSink
+        FileType.DIRECTORY -> DirectoryFileSink(this)
+        FileType.JAR -> JarFileSink(this)
       }
+    }
 
   private val File.fileType: FileType
     get() = when {
@@ -44,5 +44,9 @@ object IoFactory : FileSource.Factory, FileSink.Factory {
       else -> error("Unknown file type for file $this")
     }
 
-  private enum class FileType { EMPTY, DIRECTORY, JAR }
+  private enum class FileType {
+    EMPTY,
+    DIRECTORY,
+    JAR
+  }
 }

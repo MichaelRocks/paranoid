@@ -1,5 +1,5 @@
 /*
- * Copyright 2018 Michael Rozumyanskiy
+ * Copyright 2020 Michael Rozumyanskiy
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -20,6 +20,6 @@ import io.michaelrocks.grip.mirrors.Type
 import org.objectweb.asm.commons.Method
 
 data class Deobfuscator(
-    val type: Type.Object,
-    val deobfuscationMethod: Method
+  val type: Type.Object,
+  val deobfuscationMethod: Method
 )

@@ -1,5 +1,5 @@
 /*
- * Copyright 2018 Michael Rozumyanskiy
+ * Copyright 2021 Michael Rozumyanskiy
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -21,40 +21,40 @@ import io.michaelrocks.paranoid.processor.logging.getLogger
 import io.michaelrocks.paranoid.processor.model.Deobfuscator
 import org.objectweb.asm.ClassVisitor
 import org.objectweb.asm.MethodVisitor
-import org.objectweb.asm.Opcodes.ASM5
+import org.objectweb.asm.Opcodes.ASM9
 import org.objectweb.asm.commons.GeneratorAdapter
 
 class StringLiteralsClassPatcher(
-    private val deobfuscator: Deobfuscator,
-    private val stringRegistry: StringRegistry,
-    delegate: ClassVisitor
-) : ClassVisitor(ASM5, delegate) {
+  private val deobfuscator: Deobfuscator,
+  private val stringRegistry: StringRegistry,
+  delegate: ClassVisitor
+) : ClassVisitor(ASM9, delegate) {
 
   private val logger = getLogger()
 
   private var className: String = ""
 
   override fun visit(
-      version: Int,
-      access: Int,
-      name: String,
-      signature: String?,
-      superName: String?,
-      interfaces: Array<out String>?
+    version: Int,
+    access: Int,
+    name: String,
+    signature: String?,
+    superName: String?,
+    interfaces: Array<out String>?
   ) {
     super.visit(version, access, name, signature, superName, interfaces)
     className = name
   }
 
   override fun visitMethod(
-      access: Int,
-      name: String,
-      desc: String,
-      signature: String?,
-      exceptions: Array<out String>?
+    access: Int,
+    name: String,
+    desc: String,
+    signature: String?,
+    exceptions: Array<out String>?
   ): MethodVisitor {
     val visitor = super.visitMethod(access, name, desc, signature, exceptions)
-    return object : GeneratorAdapter(ASM5, visitor, access, name, desc) {
+    return object : GeneratorAdapter(ASM9, visitor, access, name, desc) {
       override fun visitLdcInsn(constant: Any) {
         if (constant is String) {
           replaceStringWithDeobfuscationMethod(constant)

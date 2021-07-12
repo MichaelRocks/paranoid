@@ -1,5 +1,5 @@
 /*
- * Copyright 2016 Michael Rozumyanskiy
+ * Copyright 2020 Michael Rozumyanskiy
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -19,10 +19,10 @@ package io.michaelrocks.paranoid.processor
 import io.michaelrocks.grip.mirrors.Type
 
 data class AnalysisResult(
-    val configurationsByType: Map<Type.Object, ClassConfiguration>
+  val configurationsByType: Map<Type.Object, ClassConfiguration>
 )
 
 data class ClassConfiguration(
-    val container: Type.Object,
-    val constantStringsByFieldName: Map<String, String>
+  val container: Type.Object,
+  val constantStringsByFieldName: Map<String, String>
 )

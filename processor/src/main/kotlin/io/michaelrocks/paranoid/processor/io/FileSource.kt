@@ -1,5 +1,5 @@
 /*
- * Copyright 2018 Michael Rozumyanskiy
+ * Copyright 2020 Michael Rozumyanskiy
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -23,7 +23,11 @@ interface FileSource : Closeable {
   fun listFiles(callback: (name: String, type: EntryType) -> Unit)
   fun readFile(path: String): ByteArray
 
-  enum class EntryType { CLASS, FILE, DIRECTORY }
+  enum class EntryType {
+    CLASS,
+    FILE,
+    DIRECTORY
+  }
 
   interface Factory {
     fun createFileSource(inputFile: File): FileSource

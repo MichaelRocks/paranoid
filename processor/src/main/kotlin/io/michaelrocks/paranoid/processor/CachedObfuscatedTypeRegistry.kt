@@ -1,5 +1,5 @@
 /*
- * Copyright 2018 Michael Rozumyanskiy
+ * Copyright 2020 Michael Rozumyanskiy
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -19,8 +19,9 @@ package io.michaelrocks.paranoid.processor
 import io.michaelrocks.grip.mirrors.Type
 
 class CachedObfuscatedTypeRegistry(
-    private val registry: ObfuscatedTypeRegistry
+  private val registry: ObfuscatedTypeRegistry
 ) : ObfuscatedTypeRegistry {
+
   private val cache = mutableMapOf<Type.Object, Boolean>()
 
   override fun shouldObfuscate(type: Type.Object): Boolean {

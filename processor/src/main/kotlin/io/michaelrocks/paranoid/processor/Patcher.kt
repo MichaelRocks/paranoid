@@ -1,5 +1,5 @@
 /*
- * Copyright 2018 Michael Rozumyanskiy
+ * Copyright 2020 Michael Rozumyanskiy
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -28,11 +28,12 @@ import org.objectweb.asm.ClassVisitor
 import org.objectweb.asm.ClassWriter
 
 class Patcher(
-    private val deobfuscator: Deobfuscator,
-    private val stringRegistry: StringRegistry,
-    private val analysisResult: AnalysisResult,
-    private val classRegistry: ClassRegistry
+  private val deobfuscator: Deobfuscator,
+  private val stringRegistry: StringRegistry,
+  private val analysisResult: AnalysisResult,
+  private val classRegistry: ClassRegistry
 ) {
+
   private val logger = getLogger()
 
   fun copyAndPatchClasses(sourcesAndSinks: List<Pair<FileSource, FileSink>>) {
@@ -86,10 +87,10 @@ class Patcher(
     val reader = ClassReader(source.readFile(name))
     val writer = StandaloneClassWriter(ClassWriter.COMPUTE_MAXS or ClassWriter.COMPUTE_FRAMES, classRegistry)
     val patcher =
-        writer
-            .wrapIf(hasObfuscateAnnotation) { RemoveObfuscateClassPatcher(it) }
-            .wrapIf(configuration != null) { StringLiteralsClassPatcher(deobfuscator, stringRegistry, it) }
-            .wrapIf(configuration != null) { StringConstantsClassPatcher(configuration!!, it) }
+      writer
+        .wrapIf(hasObfuscateAnnotation) { RemoveObfuscateClassPatcher(it) }
+        .wrapIf(configuration != null) { StringLiteralsClassPatcher(deobfuscator, stringRegistry, it) }
+        .wrapIf(configuration != null) { StringConstantsClassPatcher(configuration!!, it) }
     reader.accept(patcher, ClassReader.SKIP_FRAMES)
     sink.createFile(name, writer.toByteArray())
     return true
