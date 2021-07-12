@@ -1,5 +1,5 @@
 /*
- * Copyright 2020 Michael Rozumyanskiy
+ * Copyright 2021 Michael Rozumyanskiy
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -23,7 +23,7 @@ import org.objectweb.asm.FieldVisitor
 import org.objectweb.asm.MethodVisitor
 import org.objectweb.asm.Opcodes.ACC_PRIVATE
 import org.objectweb.asm.Opcodes.ACC_STATIC
-import org.objectweb.asm.Opcodes.ASM5
+import org.objectweb.asm.Opcodes.ASM9
 import org.objectweb.asm.Type
 import org.objectweb.asm.commons.GeneratorAdapter
 import org.objectweb.asm.commons.Method
@@ -31,7 +31,7 @@ import org.objectweb.asm.commons.Method
 class StringConstantsClassPatcher(
   private val configuration: ClassConfiguration,
   delegate: ClassVisitor
-) : ClassVisitor(ASM5, delegate) {
+) : ClassVisitor(ASM9, delegate) {
 
   private val logger = getLogger()
 
@@ -89,7 +89,7 @@ class StringConstantsClassPatcher(
   ): MethodVisitor {
     if (!isStaticInitializerPatched) {
       isStaticInitializerPatched = true
-      return object : GeneratorAdapter(ASM5, visitor, access, name, desc) {
+      return object : GeneratorAdapter(ASM9, visitor, access, name, desc) {
         override fun visitCode() {
           logger.info("{}:", configuration.container.internalName)
           logger.info("  Patching <clinit>...")
