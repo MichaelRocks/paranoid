@@ -1,5 +1,5 @@
 /*
- * Copyright 2020 Michael Rozumyanskiy
+ * Copyright 2021 Michael Rozumyanskiy
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -42,11 +42,11 @@ class StringRegistryImpl(
     val id = seed or ((index.toLong() shl 32) xor mask)
 
     state = RandomHelper.next(state)
-    builder.append((((state ushr 32) and 0xffffL) xor string.length.toLong()).toChar())
+    builder.append((((state ushr 32) and 0xffffL) xor string.length.toLong()).toInt().toChar())
 
     for (char in string) {
       state = RandomHelper.next(state)
-      builder.append((((state ushr 32) and 0xffffL) xor char.toLong()).toChar())
+      builder.append((((state ushr 32) and 0xffffL) xor char.code.toLong()).toInt().toChar())
     }
 
     return id
