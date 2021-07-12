@@ -1,5 +1,5 @@
 /*
- * Copyright 2020 Michael Rozumyanskiy
+ * Copyright 2021 Michael Rozumyanskiy
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -22,7 +22,7 @@ import org.objectweb.asm.Opcodes
 
 class RemoveObfuscateClassPatcher(
   delegate: ClassVisitor
-) : ClassVisitor(Opcodes.ASM5, delegate) {
+) : ClassVisitor(Opcodes.ASM9, delegate) {
 
   private val obfuscateDescriptor = OBFUSCATE_TYPE.descriptor
 

@@ -1,32 +1,63 @@
 name: Build
-on: [push, pull_request]
+on: [ push, pull_request ]
 
 env:
   GRADLE_OPTS: "-Dorg.gradle.jvmargs=-Xmx4g -Dorg.gradle.daemon=false -Dkotlin.incremental=false"
+  PABLO_OPTS: |
+    -Ppablo.repository.maven.name=Sonatype \
+    -Ppablo.repository.maven.url=https://s01.oss.sonatype.org/service/local/staging/deploy/maven2/ \
+    -Ppablo.repository.maven.username=${{ secrets.SONATYPE_USERNAME }} \
+    -Ppablo.repository.maven.password=${{ secrets.SONATYPE_PASSWORD }} \
+    -Ppablo.signing.keyId=${{ secrets.SIGNING_KEY_ID }} \
+    -Ppablo.signing.password=${{ secrets.SIGNING_PASSWORD }} \
+    -Ppablo.signing.secretKey='${{ secrets.SIGNING_SECRET_KEY }}'
 
 jobs:
   build:
-    name: Build and test
-    runs-on: macos-latest
-    strategy:
-      matrix:
-        api-level: [21]
-        target: [default]
-        arch: [x86_64]
+    name: Build
+    runs-on: ubuntu-latest
 
     steps:
-      - uses: actions/checkout@v2
+      - name: Checkout
+        uses: actions/checkout@v2
 
-      - name: Set up JDK 1.8
+      - name: Validate Gradle Wrapper
+        uses: gradle/wrapper-validation-action@v1
+
+      - name: Configure JDK
         uses: actions/setup-java@v1
         with:
           java-version: 8
 
       - name: Publish bootstrap artifacts
-        run: ./gradlew assemble publishToMavenLocal -Pbootstrap=true -Ppablo.signing.enabled=false --rerun-tasks
+        run: ./gradlew publishToMavenLocal -Pbootstrap=true ${{ env.PABLO_OPTS }}
 
       - name: Run unit tests
         run: ./gradlew check
+
+  test:
+    name: Test
+    runs-on: macos-latest
+    strategy:
+      matrix:
+        api-level: [ 21, 29 ]
+        target: [ default ]
+        arch: [ x86_64 ]
+
+    needs:
+      - build
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v2
+
+      - name: Configure JDK
+        uses: actions/setup-java@v1
+        with:
+          java-version: 8
+
+      - name: Publish bootstrap artifacts
+        run: ./gradlew publishToMavenLocal -Pbootstrap=true ${{ env.PABLO_OPTS }}
 
       - name: Run integration tests
         uses: reactivecircus/android-emulator-runner@v2
@@ -35,3 +66,24 @@ jobs:
           target: ${{ matrix.target }}
           arch: ${{ matrix.arch }}
           script: ./gradlew connectedCheck
+
+  publish:
+    name: Publish
+    runs-on: ubuntu-latest
+    if: contains(github.ref, '/tags/v')
+    needs:
+      - build
+      - test
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v2
+
+      - name: Configure JDK
+        uses: actions/setup-java@v1
+        with:
+          java-version: 8
+
+      - name: Upload Artifacts
+        run: |
+          ./gradlew publishMavenPublicationToSonatypeRepository -Pbootstrap=true ${{ env.PABLO_OPTS }}
