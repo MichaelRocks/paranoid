@@ -19,8 +19,6 @@ package io.michaelrocks.paranoid.processor
 import io.michaelrocks.grip.ClassRegistry
 import io.michaelrocks.grip.mirrors.toAsmType
 import io.michaelrocks.paranoid.processor.model.Deobfuscator
-import jdk.internal.org.objectweb.asm.Opcodes.ACC_PUBLIC
-import jdk.internal.org.objectweb.asm.Opcodes.ACC_SUPER
 import org.objectweb.asm.ClassVisitor
 import org.objectweb.asm.ClassWriter
 import org.objectweb.asm.Opcodes
@@ -37,7 +35,7 @@ class DeobfuscatorGenerator(
     val writer = StandaloneClassWriter(ClassWriter.COMPUTE_MAXS or ClassWriter.COMPUTE_FRAMES, classRegistry)
     writer.visit(
       Opcodes.V1_6,
-      ACC_PUBLIC or ACC_SUPER,
+      Opcodes.ACC_PUBLIC or Opcodes.ACC_SUPER,
       deobfuscator.type.internalName,
       null,
       OBJECT_TYPE.internalName,
