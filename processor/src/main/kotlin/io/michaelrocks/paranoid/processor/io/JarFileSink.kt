@@ -18,14 +18,16 @@ package io.michaelrocks.paranoid.processor.io
 
 import io.michaelrocks.paranoid.processor.commons.closeQuietly
 import java.io.File
+import java.nio.file.attribute.FileTime
 import java.util.jar.JarEntry
 import java.util.jar.JarOutputStream
 
 internal class JarFileSink(private val jarFile: File) : FileSink {
+  private val ZERO_FILE_TIME = FileTime.fromMillis(0L)
   private val stream = createJarOutputStream(jarFile)
 
   override fun createFile(path: String, data: ByteArray) {
-    val entry = JarEntry(path)
+    val entry = createJarEntryWithZeroTime(path)
     stream.putNextEntry(entry)
     stream.write(data)
     stream.closeEntry()
@@ -33,7 +35,7 @@ internal class JarFileSink(private val jarFile: File) : FileSink {
 
   override fun createDirectory(path: String) {
     val directoryPath = if (path.endsWith("/")) path else "$path/"
-    val entry = JarEntry(directoryPath)
+    val entry = createJarEntryWithZeroTime(directoryPath)
     stream.putNextEntry(entry)
     stream.closeEntry()
   }
@@ -53,5 +55,16 @@ internal class JarFileSink(private val jarFile: File) : FileSink {
   private fun createJarOutputStream(jarFile: File): JarOutputStream {
     jarFile.parentFile?.mkdirs()
     return JarOutputStream(jarFile.outputStream().buffered())
+  }
+
+  // timestamps for files in jar in most cases are useless.
+  // Set the modification/creation time to 0 to ensure that jars with same content
+  // always have the same checksum. It's useful for reproducible builds
+  private fun createJarEntryWithZeroTime(path: String): JarEntry {
+    return JarEntry(path).apply {
+      creationTime = ZERO_FILE_TIME
+      lastAccessTime = ZERO_FILE_TIME
+      lastModifiedTime = ZERO_FILE_TIME
+    }
   }
 }
