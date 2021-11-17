@@ -111,6 +111,10 @@ class ParanoidTransform(
     return false
   }
 
+  override fun isCacheable(): Boolean {
+    return true
+  }
+
   override fun getParameterInputs(): MutableMap<String, Any?> {
     return mutableMapOf(
       "version" to Build.VERSION,
