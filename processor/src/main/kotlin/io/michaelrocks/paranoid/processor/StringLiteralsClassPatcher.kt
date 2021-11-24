@@ -21,14 +21,14 @@ import io.michaelrocks.paranoid.processor.logging.getLogger
 import io.michaelrocks.paranoid.processor.model.Deobfuscator
 import org.objectweb.asm.ClassVisitor
 import org.objectweb.asm.MethodVisitor
-import org.objectweb.asm.Opcodes.ASM9
 import org.objectweb.asm.commons.GeneratorAdapter
 
 class StringLiteralsClassPatcher(
   private val deobfuscator: Deobfuscator,
   private val stringRegistry: StringRegistry,
-  delegate: ClassVisitor
-) : ClassVisitor(ASM9, delegate) {
+  asmApi: Int,
+  delegate: ClassVisitor,
+) : ClassVisitor(asmApi, delegate) {
 
   private val logger = getLogger()
 
@@ -54,7 +54,7 @@ class StringLiteralsClassPatcher(
     exceptions: Array<out String>?
   ): MethodVisitor {
     val visitor = super.visitMethod(access, name, desc, signature, exceptions)
-    return object : GeneratorAdapter(ASM9, visitor, access, name, desc) {
+    return object : GeneratorAdapter(api, visitor, access, name, desc) {
       override fun visitLdcInsn(constant: Any) {
         if (constant is String) {
           replaceStringWithDeobfuscationMethod(constant)

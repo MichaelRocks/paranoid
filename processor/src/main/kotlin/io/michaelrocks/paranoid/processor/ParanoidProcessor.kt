@@ -36,12 +36,13 @@ class ParanoidProcessor(
   private val genPath: File,
   private val classpath: Collection<File>,
   private val bootClasspath: Collection<File>,
-  private val projectName: String
+  private val projectName: String,
+  private val asmApi: Int = Opcodes.ASM9,
 ) {
 
   private val logger = getLogger()
 
-  private val grip: Grip = GripFactory.newInstance(Opcodes.ASM9).create(inputs + classpath + bootClasspath)
+  private val grip: Grip = GripFactory.newInstance(asmApi).create(inputs + classpath + bootClasspath)
   private val stringRegistry = StringRegistryImpl(obfuscationSeed)
 
   fun process() {
@@ -62,7 +63,7 @@ class ParanoidProcessor(
     }
 
     try {
-      Patcher(deobfuscator, stringRegistry, analysisResult, grip.classRegistry)
+      Patcher(deobfuscator, stringRegistry, analysisResult, grip.classRegistry, asmApi)
         .copyAndPatchClasses(sourcesAndSinks)
       DirectoryFileSink(genPath).use { sink ->
         val deobfuscatorBytes = DeobfuscatorGenerator(deobfuscator, stringRegistry, grip.classRegistry)

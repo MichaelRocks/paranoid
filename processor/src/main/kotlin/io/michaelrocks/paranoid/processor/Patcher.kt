@@ -31,7 +31,8 @@ class Patcher(
   private val deobfuscator: Deobfuscator,
   private val stringRegistry: StringRegistry,
   private val analysisResult: AnalysisResult,
-  private val classRegistry: ClassRegistry
+  private val classRegistry: ClassRegistry,
+  private val asmApi: Int,
 ) {
 
   private val logger = getLogger()
@@ -88,9 +89,9 @@ class Patcher(
     val writer = StandaloneClassWriter(ClassWriter.COMPUTE_MAXS or ClassWriter.COMPUTE_FRAMES, classRegistry)
     val patcher =
       writer
-        .wrapIf(hasObfuscateAnnotation) { RemoveObfuscateClassPatcher(it) }
-        .wrapIf(configuration != null) { StringLiteralsClassPatcher(deobfuscator, stringRegistry, it) }
-        .wrapIf(configuration != null) { StringConstantsClassPatcher(configuration!!, it) }
+        .wrapIf(hasObfuscateAnnotation) { RemoveObfuscateClassPatcher(asmApi, it) }
+        .wrapIf(configuration != null) { StringLiteralsClassPatcher(deobfuscator, stringRegistry, asmApi, it) }
+        .wrapIf(configuration != null) { StringConstantsClassPatcher(configuration!!, asmApi, it) }
     reader.accept(patcher, ClassReader.SKIP_FRAMES)
     sink.createFile(name, writer.toByteArray())
     return true

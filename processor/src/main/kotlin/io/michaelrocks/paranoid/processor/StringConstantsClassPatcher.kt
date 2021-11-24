@@ -23,15 +23,15 @@ import org.objectweb.asm.FieldVisitor
 import org.objectweb.asm.MethodVisitor
 import org.objectweb.asm.Opcodes.ACC_PRIVATE
 import org.objectweb.asm.Opcodes.ACC_STATIC
-import org.objectweb.asm.Opcodes.ASM9
 import org.objectweb.asm.Type
 import org.objectweb.asm.commons.GeneratorAdapter
 import org.objectweb.asm.commons.Method
 
 class StringConstantsClassPatcher(
   private val configuration: ClassConfiguration,
-  delegate: ClassVisitor
-) : ClassVisitor(ASM9, delegate) {
+  asmApi: Int,
+  delegate: ClassVisitor,
+) : ClassVisitor(asmApi, delegate) {
 
   private val logger = getLogger()
 
@@ -89,7 +89,7 @@ class StringConstantsClassPatcher(
   ): MethodVisitor {
     if (!isStaticInitializerPatched) {
       isStaticInitializerPatched = true
-      return object : GeneratorAdapter(ASM9, visitor, access, name, desc) {
+      return object : GeneratorAdapter(api, visitor, access, name, desc) {
         override fun visitCode() {
           logger.info("{}:", configuration.container.internalName)
           logger.info("  Patching <clinit>...")
