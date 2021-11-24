@@ -26,6 +26,7 @@ import io.michaelrocks.paranoid.processor.model.Deobfuscator
 import org.objectweb.asm.ClassReader
 import org.objectweb.asm.ClassVisitor
 import org.objectweb.asm.ClassWriter
+import org.objectweb.asm.Opcodes
 
 class Patcher(
   private val deobfuscator: Deobfuscator,
@@ -87,11 +88,12 @@ class Patcher(
     logger.debug("Patching class {}", name)
     val reader = ClassReader(source.readFile(name))
     val writer = StandaloneClassWriter(ClassWriter.COMPUTE_MAXS or ClassWriter.COMPUTE_FRAMES, classRegistry)
+    val shouldObfuscateLiterals = reader.access and Opcodes.ACC_INTERFACE == 0
     val patcher =
       writer
         .wrapIf(hasObfuscateAnnotation) { RemoveObfuscateClassPatcher(asmApi, it) }
         .wrapIf(configuration != null) { StringLiteralsClassPatcher(deobfuscator, stringRegistry, asmApi, it) }
-        .wrapIf(configuration != null) { StringConstantsClassPatcher(configuration!!, asmApi, it) }
+        .wrapIf(configuration != null && shouldObfuscateLiterals) { StringConstantsClassPatcher(configuration!!, asmApi, it) }
     reader.accept(patcher, ClassReader.SKIP_FRAMES)
     sink.createFile(name, writer.toByteArray())
     return true
