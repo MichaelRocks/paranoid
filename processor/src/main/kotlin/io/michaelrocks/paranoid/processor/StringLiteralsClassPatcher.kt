@@ -16,7 +16,7 @@
 
 package io.michaelrocks.paranoid.processor
 
-import io.michaelrocks.grip.mirrors.toAsmType
+import com.joom.grip.mirrors.toAsmType
 import io.michaelrocks.paranoid.processor.logging.getLogger
 import io.michaelrocks.paranoid.processor.model.Deobfuscator
 import org.objectweb.asm.ClassVisitor

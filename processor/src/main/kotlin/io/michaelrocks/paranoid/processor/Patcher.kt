@@ -16,11 +16,11 @@
 
 package io.michaelrocks.paranoid.processor
 
-import io.michaelrocks.grip.ClassRegistry
-import io.michaelrocks.grip.io.FileSink
-import io.michaelrocks.grip.io.FileSource
-import io.michaelrocks.grip.mirrors.Type
-import io.michaelrocks.grip.mirrors.getObjectTypeByInternalName
+import com.joom.grip.ClassRegistry
+import com.joom.grip.io.FileSink
+import com.joom.grip.io.FileSource
+import com.joom.grip.mirrors.Type
+import com.joom.grip.mirrors.getObjectTypeByInternalName
 import io.michaelrocks.paranoid.processor.logging.getLogger
 import io.michaelrocks.paranoid.processor.model.Deobfuscator
 import org.objectweb.asm.ClassReader

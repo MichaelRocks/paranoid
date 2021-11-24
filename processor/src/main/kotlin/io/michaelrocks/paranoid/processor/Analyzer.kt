@@ -1,5 +1,5 @@
 /*
- * Copyright 2020 Michael Rozumyanskiy
+ * Copyright 2021 Michael Rozumyanskiy
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,16 +16,16 @@
 
 package io.michaelrocks.paranoid.processor
 
-import io.michaelrocks.grip.Grip
-import io.michaelrocks.grip.and
-import io.michaelrocks.grip.classes
-import io.michaelrocks.grip.fields
-import io.michaelrocks.grip.from
-import io.michaelrocks.grip.isFinal
-import io.michaelrocks.grip.isStatic
-import io.michaelrocks.grip.mirrors.FieldMirror
-import io.michaelrocks.grip.mirrors.Type
-import io.michaelrocks.grip.withFieldInitializer
+import com.joom.grip.Grip
+import com.joom.grip.and
+import com.joom.grip.classes
+import com.joom.grip.fields
+import com.joom.grip.from
+import com.joom.grip.isFinal
+import com.joom.grip.isStatic
+import com.joom.grip.mirrors.FieldMirror
+import com.joom.grip.mirrors.Type
+import com.joom.grip.withFieldInitializer
 import java.io.File
 
 class Analyzer(private val grip: Grip) {

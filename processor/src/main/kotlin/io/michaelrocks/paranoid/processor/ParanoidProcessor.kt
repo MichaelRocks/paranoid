@@ -16,14 +16,15 @@
 
 package io.michaelrocks.paranoid.processor
 
-import io.michaelrocks.grip.Grip
-import io.michaelrocks.grip.GripFactory
-import io.michaelrocks.grip.io.DirectoryFileSink
-import io.michaelrocks.grip.io.IoFactory
-import io.michaelrocks.grip.mirrors.getObjectTypeByInternalName
+import com.joom.grip.Grip
+import com.joom.grip.GripFactory
+import com.joom.grip.io.DirectoryFileSink
+import com.joom.grip.io.IoFactory
+import com.joom.grip.mirrors.getObjectTypeByInternalName
 import io.michaelrocks.paranoid.processor.commons.closeQuietly
 import io.michaelrocks.paranoid.processor.logging.getLogger
 import io.michaelrocks.paranoid.processor.model.Deobfuscator
+import org.objectweb.asm.Opcodes
 import org.objectweb.asm.Type
 import org.objectweb.asm.commons.Method
 import java.io.File
@@ -40,7 +41,7 @@ class ParanoidProcessor(
 
   private val logger = getLogger()
 
-  private val grip: Grip = GripFactory.create(inputs + classpath + bootClasspath)
+  private val grip: Grip = GripFactory.newInstance(Opcodes.ASM9).create(inputs + classpath + bootClasspath)
   private val stringRegistry = StringRegistryImpl(obfuscationSeed)
 
   fun process() {
