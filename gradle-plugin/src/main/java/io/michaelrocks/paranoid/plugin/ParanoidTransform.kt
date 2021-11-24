@@ -65,8 +65,8 @@ class ParanoidTransform(
         QualifiedContent.Scope.PROJECT,
         Format.DIRECTORY
       ),
-      classpath = invocation.referencedInputs.flatMap {
-        it.jarInputs.map { it.file } + it.directoryInputs.map { it.file }
+      classpath = invocation.referencedInputs.flatMap { input ->
+        input.jarInputs.map { it.file } + input.directoryInputs.map { it.file }
       },
       bootClasspath = android.bootClasspath,
       projectName = invocation.context.path.replace(":transformClassesWithParanoidFor", ":").replace(':', '$')
