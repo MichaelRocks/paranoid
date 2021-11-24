@@ -25,9 +25,10 @@ jobs:
         uses: gradle/wrapper-validation-action@v1
 
       - name: Configure JDK
-        uses: actions/setup-java@v1
+        uses: actions/setup-java@v2
         with:
-          java-version: 8
+          distribution: 'temurin'
+          java-version: '11'
 
       - name: Publish bootstrap artifacts
         run: ./gradlew publishToMavenLocal -Pbootstrap=true ${{ env.PABLO_OPTS }}
@@ -52,9 +53,10 @@ jobs:
         uses: actions/checkout@v2
 
       - name: Configure JDK
-        uses: actions/setup-java@v1
+        uses: actions/setup-java@v2
         with:
-          java-version: 8
+          distribution: 'temurin'
+          java-version: '11'
 
       - name: Publish bootstrap artifacts
         run: ./gradlew publishToMavenLocal -Pbootstrap=true ${{ env.PABLO_OPTS }}
@@ -80,9 +82,10 @@ jobs:
         uses: actions/checkout@v2
 
       - name: Configure JDK
-        uses: actions/setup-java@v1
+        uses: actions/setup-java@v2
         with:
-          java-version: 8
+          distribution: 'temurin'
+          java-version: '11'
 
       - name: Upload Artifacts
         run: ./gradlew publishMavenPublicationToSonatypeRepository -Pbootstrap=true ${{ env.PABLO_OPTS }}

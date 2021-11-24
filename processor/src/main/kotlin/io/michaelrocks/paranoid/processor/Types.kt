@@ -1,5 +1,5 @@
 /*
- * Copyright 2020 Michael Rozumyanskiy
+ * Copyright 2021 Michael Rozumyanskiy
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,7 +16,7 @@
 
 package io.michaelrocks.paranoid.processor
 
-import io.michaelrocks.grip.mirrors.getObjectType
+import com.joom.grip.mirrors.getObjectType
 import io.michaelrocks.paranoid.DeobfuscatorHelper
 import io.michaelrocks.paranoid.Obfuscate
 

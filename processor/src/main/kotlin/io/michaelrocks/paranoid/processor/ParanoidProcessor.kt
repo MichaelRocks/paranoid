@@ -1,5 +1,5 @@
 /*
- * Copyright 2020 Michael Rozumyanskiy
+ * Copyright 2021 Michael Rozumyanskiy
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,14 +16,15 @@
 
 package io.michaelrocks.paranoid.processor
 
-import io.michaelrocks.grip.Grip
-import io.michaelrocks.grip.GripFactory
-import io.michaelrocks.grip.mirrors.getObjectTypeByInternalName
+import com.joom.grip.Grip
+import com.joom.grip.GripFactory
+import com.joom.grip.io.DirectoryFileSink
+import com.joom.grip.io.IoFactory
+import com.joom.grip.mirrors.getObjectTypeByInternalName
 import io.michaelrocks.paranoid.processor.commons.closeQuietly
-import io.michaelrocks.paranoid.processor.io.DirectoryFileSink
-import io.michaelrocks.paranoid.processor.io.IoFactory
 import io.michaelrocks.paranoid.processor.logging.getLogger
 import io.michaelrocks.paranoid.processor.model.Deobfuscator
+import org.objectweb.asm.Opcodes
 import org.objectweb.asm.Type
 import org.objectweb.asm.commons.Method
 import java.io.File
@@ -35,12 +36,13 @@ class ParanoidProcessor(
   private val genPath: File,
   private val classpath: Collection<File>,
   private val bootClasspath: Collection<File>,
-  private val projectName: String
+  private val projectName: String,
+  private val asmApi: Int = Opcodes.ASM9,
 ) {
 
   private val logger = getLogger()
 
-  private val grip: Grip = GripFactory.create(inputs + classpath + bootClasspath)
+  private val grip: Grip = GripFactory.newInstance(asmApi).create(inputs + classpath + bootClasspath)
   private val stringRegistry = StringRegistryImpl(obfuscationSeed)
 
   fun process() {
@@ -61,7 +63,7 @@ class ParanoidProcessor(
     }
 
     try {
-      Patcher(deobfuscator, stringRegistry, analysisResult, grip.classRegistry)
+      Patcher(deobfuscator, stringRegistry, analysisResult, grip.classRegistry, asmApi)
         .copyAndPatchClasses(sourcesAndSinks)
       DirectoryFileSink(genPath).use { sink ->
         val deobfuscatorBytes = DeobfuscatorGenerator(deobfuscator, stringRegistry, grip.classRegistry)

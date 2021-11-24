@@ -1,5 +1,5 @@
 /*
- * Copyright 2017 Michael Rozumyanskiy
+ * Copyright 2021 Michael Rozumyanskiy
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,15 +16,14 @@
 
 package io.michaelrocks.paranoid.processor
 
-import io.michaelrocks.grip.ClassRegistry
-import io.michaelrocks.grip.mirrors.ClassMirror
-import io.michaelrocks.grip.mirrors.Type
-import io.michaelrocks.grip.mirrors.getObjectType
-import io.michaelrocks.grip.mirrors.getObjectTypeByInternalName
+import com.joom.grip.ClassRegistry
+import com.joom.grip.mirrors.ClassMirror
+import com.joom.grip.mirrors.Type
+import com.joom.grip.mirrors.getObjectType
+import com.joom.grip.mirrors.getObjectTypeByInternalName
 import io.michaelrocks.paranoid.processor.logging.getLogger
 import org.objectweb.asm.ClassReader
 import org.objectweb.asm.ClassWriter
-import java.util.HashSet
 
 class StandaloneClassWriter : ClassWriter {
   private val logger = getLogger()

@@ -1,5 +1,5 @@
 /*
- * Copyright 2020 Michael Rozumyanskiy
+ * Copyright 2021 Michael Rozumyanskiy
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,22 +16,24 @@
 
 package io.michaelrocks.paranoid.processor
 
-import io.michaelrocks.grip.ClassRegistry
-import io.michaelrocks.grip.mirrors.Type
-import io.michaelrocks.grip.mirrors.getObjectTypeByInternalName
-import io.michaelrocks.paranoid.processor.io.FileSink
-import io.michaelrocks.paranoid.processor.io.FileSource
+import com.joom.grip.ClassRegistry
+import com.joom.grip.io.FileSink
+import com.joom.grip.io.FileSource
+import com.joom.grip.mirrors.Type
+import com.joom.grip.mirrors.getObjectTypeByInternalName
 import io.michaelrocks.paranoid.processor.logging.getLogger
 import io.michaelrocks.paranoid.processor.model.Deobfuscator
 import org.objectweb.asm.ClassReader
 import org.objectweb.asm.ClassVisitor
 import org.objectweb.asm.ClassWriter
+import org.objectweb.asm.Opcodes
 
 class Patcher(
   private val deobfuscator: Deobfuscator,
   private val stringRegistry: StringRegistry,
   private val analysisResult: AnalysisResult,
-  private val classRegistry: ClassRegistry
+  private val classRegistry: ClassRegistry,
+  private val asmApi: Int,
 ) {
 
   private val logger = getLogger()
@@ -86,11 +88,12 @@ class Patcher(
     logger.debug("Patching class {}", name)
     val reader = ClassReader(source.readFile(name))
     val writer = StandaloneClassWriter(ClassWriter.COMPUTE_MAXS or ClassWriter.COMPUTE_FRAMES, classRegistry)
+    val shouldObfuscateLiterals = reader.access and Opcodes.ACC_INTERFACE == 0
     val patcher =
       writer
-        .wrapIf(hasObfuscateAnnotation) { RemoveObfuscateClassPatcher(it) }
-        .wrapIf(configuration != null) { StringLiteralsClassPatcher(deobfuscator, stringRegistry, it) }
-        .wrapIf(configuration != null) { StringConstantsClassPatcher(configuration!!, it) }
+        .wrapIf(hasObfuscateAnnotation) { RemoveObfuscateClassPatcher(asmApi, it) }
+        .wrapIf(configuration != null) { StringLiteralsClassPatcher(deobfuscator, stringRegistry, asmApi, it) }
+        .wrapIf(configuration != null && shouldObfuscateLiterals) { StringConstantsClassPatcher(configuration!!, asmApi, it) }
     reader.accept(patcher, ClassReader.SKIP_FRAMES)
     sink.createFile(name, writer.toByteArray())
     return true
