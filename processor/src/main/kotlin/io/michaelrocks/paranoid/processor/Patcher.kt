@@ -1,5 +1,5 @@
 /*
- * Copyright 2020 Michael Rozumyanskiy
+ * Copyright 2021 Michael Rozumyanskiy
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -17,10 +17,10 @@
 package io.michaelrocks.paranoid.processor
 
 import io.michaelrocks.grip.ClassRegistry
+import io.michaelrocks.grip.io.FileSink
+import io.michaelrocks.grip.io.FileSource
 import io.michaelrocks.grip.mirrors.Type
 import io.michaelrocks.grip.mirrors.getObjectTypeByInternalName
-import io.michaelrocks.paranoid.processor.io.FileSink
-import io.michaelrocks.paranoid.processor.io.FileSource
 import io.michaelrocks.paranoid.processor.logging.getLogger
 import io.michaelrocks.paranoid.processor.model.Deobfuscator
 import org.objectweb.asm.ClassReader
