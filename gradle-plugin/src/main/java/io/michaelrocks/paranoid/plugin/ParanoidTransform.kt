@@ -1,5 +1,5 @@
 /*
- * Copyright 2020 Michael Rozumyanskiy
+ * Copyright 2021 Michael Rozumyanskiy
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -26,7 +26,6 @@ import com.android.build.api.transform.TransformOutputProvider
 import com.android.build.gradle.BaseExtension
 import io.michaelrocks.paranoid.processor.ParanoidProcessor
 import java.io.File
-import java.security.SecureRandom
 import java.util.EnumSet
 
 class ParanoidTransform(
@@ -56,7 +55,7 @@ class ParanoidTransform(
     }
 
     val processor = ParanoidProcessor(
-      obfuscationSeed = paranoid.obfuscationSeed ?: SecureRandom().nextInt(),
+      obfuscationSeed = paranoid.obfuscationSeed ?: ObfuscationSeedCalculator.calculate(inputs),
       inputs = inputs.map { it.file },
       outputs = outputs,
       genPath = invocation.outputProvider.getContentLocation(
@@ -109,6 +108,10 @@ class ParanoidTransform(
 
   override fun isIncremental(): Boolean {
     return false
+  }
+
+  override fun isCacheable(): Boolean {
+    return true
   }
 
   override fun getParameterInputs(): MutableMap<String, Any?> {
