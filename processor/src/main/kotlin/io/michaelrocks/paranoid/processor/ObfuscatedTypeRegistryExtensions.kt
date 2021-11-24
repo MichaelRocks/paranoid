@@ -1,5 +1,5 @@
 /*
- * Copyright 2018 Michael Rozumyanskiy
+ * Copyright 2021 Michael Rozumyanskiy
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,11 +16,11 @@
 
 package io.michaelrocks.paranoid.processor
 
-import io.michaelrocks.grip.ClassRegistry
-import io.michaelrocks.grip.Grip
-import io.michaelrocks.grip.mirrors.Type
-import io.michaelrocks.grip.mirrors.Typed
-import io.michaelrocks.grip.objectType
+import com.joom.grip.ClassRegistry
+import com.joom.grip.Grip
+import com.joom.grip.mirrors.Type
+import com.joom.grip.mirrors.Typed
+import com.joom.grip.objectType
 
 fun newObfuscatedTypeRegistry(classRegistry: ClassRegistry): ObfuscatedTypeRegistry {
   return ObfuscatedTypeRegistryImpl(classRegistry)

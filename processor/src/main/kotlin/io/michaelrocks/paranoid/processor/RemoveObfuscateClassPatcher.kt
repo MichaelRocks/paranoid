@@ -18,11 +18,11 @@ package io.michaelrocks.paranoid.processor
 
 import org.objectweb.asm.AnnotationVisitor
 import org.objectweb.asm.ClassVisitor
-import org.objectweb.asm.Opcodes
 
 class RemoveObfuscateClassPatcher(
-  delegate: ClassVisitor
-) : ClassVisitor(Opcodes.ASM9, delegate) {
+  asmApi: Int,
+  delegate: ClassVisitor,
+) : ClassVisitor(asmApi, delegate) {
 
   private val obfuscateDescriptor = OBFUSCATE_TYPE.descriptor
 

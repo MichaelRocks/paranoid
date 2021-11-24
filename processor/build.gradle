@@ -11,7 +11,7 @@ dependencies {
 
   relocate "org.ow2.asm:asm:$asmVersion"
   relocate "org.ow2.asm:asm-commons:$asmVersion"
-  relocate "io.michaelrocks:grip:$gripVersion"
+  relocate "com.joom.grip:grip:$gripVersion"
 
   testImplementation "junit:junit:$junitVersion"
 }
@@ -23,7 +23,7 @@ jar {
 pablo {
   shadow {
     relocate 'io.michaelrocks.paranoid'
-    relocate 'io.michaelrocks.grip', 'io.michaelrocks.paranoid.grip'
+    relocate 'com.joom.grip', 'io.michaelrocks.paranoid.grip'
     relocate 'org.objectweb.asm', 'io.michaelrocks.paranoid.asm'
   }
 }

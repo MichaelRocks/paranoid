@@ -14,19 +14,26 @@
  * limitations under the License.
  */
 
-package io.michaelrocks.paranoid.processor
+package io.michaelrocks.paranoid.plugin
 
-import com.joom.grip.mirrors.Type
+import com.android.build.api.transform.QualifiedContent
+import java.io.File
 
-class CachedObfuscatedTypeRegistry(
-  private val registry: ObfuscatedTypeRegistry
-) : ObfuscatedTypeRegistry {
+object ObfuscationSeedCalculator {
 
-  private val cache = mutableMapOf<Type.Object, Boolean>()
+  fun calculate(inputs: List<QualifiedContent>): Int {
+    return inputs.maxLastModified { getLastModified(it.file) }.hashCode()
+  }
 
-  override fun shouldObfuscate(type: Type.Object): Boolean {
-    return cache.getOrPut(type) {
-      registry.shouldObfuscate(type)
+  private fun getLastModified(file: File): Long {
+    return file.walk().asIterable().maxLastModified { it.lastModified() }
+  }
+
+  private fun <T : Any> Iterable<T>.maxLastModified(lastModified: (T) -> Long): Long {
+    var result = 0L
+    forEach {
+      result = maxOf(result, lastModified(it))
     }
+    return result
   }
 }
