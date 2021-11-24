@@ -1,5 +1,5 @@
 /*
- * Copyright 2020 Michael Rozumyanskiy
+ * Copyright 2021 Michael Rozumyanskiy
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -19,11 +19,11 @@ package io.michaelrocks.paranoid.processor
 import io.michaelrocks.grip.ClassRegistry
 import io.michaelrocks.grip.mirrors.toAsmType
 import io.michaelrocks.paranoid.processor.model.Deobfuscator
-import jdk.internal.org.objectweb.asm.Opcodes.ACC_PUBLIC
-import jdk.internal.org.objectweb.asm.Opcodes.ACC_SUPER
 import org.objectweb.asm.ClassVisitor
 import org.objectweb.asm.ClassWriter
 import org.objectweb.asm.Opcodes
+import org.objectweb.asm.Opcodes.ACC_PUBLIC
+import org.objectweb.asm.Opcodes.ACC_SUPER
 import org.objectweb.asm.Type
 import org.objectweb.asm.commons.Method
 
