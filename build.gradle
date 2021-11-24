@@ -3,26 +3,26 @@ allprojects {
   version = '0.3.6'
 
   ext.javaVersion = JavaVersion.VERSION_1_8
-  ext.kotlinVersion = '1.5.20'
+  ext.kotlinVersion = '1.5.31'
   ext.pabloVersion = '1.3.1'
 
   ext.asmVersion = '9.2'
   ext.gripVersion = '0.8.1'
-  ext.logbackVersion = '1.2.3'
+  ext.logbackVersion = '1.2.7'
 
   ext.junitVersion = '4.13.2'
 
-  ext.androidToolsVersion = '4.2.1'
-  ext.androidxAppcompatVersion = '1.3.0'
-  ext.androidxAnnotationVersion = '1.2.0'
+  ext.androidToolsVersion = '7.0.3'
+  ext.androidxAppcompatVersion = '1.4.0'
+  ext.androidxAnnotationVersion = '1.3.0'
 
   ext.androidxRulesVersion = '1.4.0'
   ext.androidxRunnerVersion = '1.4.0'
   ext.androidxTestExtJunitVersion = '1.1.3'
   ext.androidxEspressoVersion = '3.4.0'
 
-  ext.androidBuildToolsVersion = '30.0.3'
-  ext.androidCompileSdkVersion = 30
+  ext.androidBuildToolsVersion = '31.0.0'
+  ext.androidCompileSdkVersion = 31
   ext.androidMinSdkVersion = 16
   ext.androidTargetSdkVersion = ext.androidCompileSdkVersion
 
