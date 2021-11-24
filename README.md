@@ -18,7 +18,7 @@ buildscript {
   }
 
   dependencies {
-    classpath 'io.michaelrocks:paranoid-gradle-plugin:0.3.5'
+    classpath 'io.michaelrocks:paranoid-gradle-plugin:0.3.6'
   }
 }
 
@@ -73,19 +73,20 @@ The class contains both string constants (`QUESTION` and `ANSWER`) and string li
 After compilation this class will be transformed to something like this.
 
 ```java
+
 @Obfuscate
 public class MainActivity extends AppCompatActivity {
   private static final String QUESTION = Deobfuscator.getString(4);
   private static final String ANSWER = Deobfuscator.getString(5);
 
-  protected void onCreate(Bundle savedInstanceState) {
+  protected void onCreate(final Bundle savedInstanceState) {
     super.onCreate(savedInstanceState);
     setContentView(R.layout.main_activity);
 
-    TextView questionTextView = (TextView) findViewById(R.id.questionTextView);
+    final TextView questionTextView = (TextView) findViewById(R.id.questionTextView);
     questionTextView.setText(String.format(Deobfuscator.getString(0), Deobfuscator.getString(1)));
 
-    TextView answerTextView = (TextView) findViewById(R.id.answerTextView);
+    final TextView answerTextView = (TextView) findViewById(R.id.answerTextView);
     answerTextView.setText(String.format(Deobfuscator.getString(2), Deobfuscator.getString(3)));
   }
 }
