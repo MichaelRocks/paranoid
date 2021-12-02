@@ -14,6 +14,7 @@
  * limitations under the License.
  */
 
+@file:Suppress("DEPRECATION")
 package io.michaelrocks.paranoid.plugin
 
 import com.android.build.api.transform.QualifiedContent
