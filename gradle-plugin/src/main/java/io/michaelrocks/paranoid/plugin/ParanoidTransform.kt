@@ -27,6 +27,7 @@ import com.android.build.api.transform.TransformOutputProvider
 import com.android.build.gradle.BaseExtension
 import io.michaelrocks.paranoid.processor.ParanoidProcessor
 import java.io.File
+import java.security.SecureRandom
 import java.util.EnumSet
 
 class ParanoidTransform(
@@ -56,7 +57,7 @@ class ParanoidTransform(
     }
 
     val processor = ParanoidProcessor(
-      obfuscationSeed = paranoid.obfuscationSeed ?: ObfuscationSeedCalculator.calculate(inputs),
+      obfuscationSeed = calculateObfuscationSeed(inputs),
       inputs = inputs.map { it.file },
       outputs = outputs,
       genPath = invocation.outputProvider.getContentLocation(
@@ -112,7 +113,7 @@ class ParanoidTransform(
   }
 
   override fun isCacheable(): Boolean {
-    return true
+    return paranoid.isCacheable
   }
 
   override fun getParameterInputs(): MutableMap<String, Any?> {
@@ -136,6 +137,15 @@ class ParanoidTransform(
   private fun copyInputsToOutputs(inputs: List<File>, outputs: List<File>) {
     inputs.zip(outputs) { input, output ->
       input.copyRecursively(output, overwrite = true)
+    }
+  }
+
+  private fun calculateObfuscationSeed(inputs: List<QualifiedContent>): Int {
+    val manuallySetObfuscationSeed = paranoid.obfuscationSeed
+    return when {
+      manuallySetObfuscationSeed != null -> manuallySetObfuscationSeed
+      !paranoid.isCacheable -> SecureRandom().nextInt()
+      else -> ObfuscationSeedCalculator.calculate(inputs)
     }
   }
 }
