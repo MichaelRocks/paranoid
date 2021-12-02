@@ -1,9 +1,9 @@
 allprojects {
   group = 'io.michaelrocks'
-  version = '0.3.6'
+  version = '0.3.7'
 
   ext.javaVersion = JavaVersion.VERSION_1_8
-  ext.kotlinVersion = '1.5.31'
+  ext.kotlinVersion = '1.5.32'
   ext.pabloVersion = '1.3.1'
 
   ext.asmVersion = '9.2'
