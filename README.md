@@ -40,11 +40,12 @@ paranoid {
 ```
 
 The extension object contains the following properties:
-- `enabled` — `boolean`. Allows to disable obfuscation for the project. Default value is `true`.
 - `cacheable` — `boolean`. Allows to enable caching for the transform. Default value is `false`.
 - `includeSubprojects` — `boolean`. Allows to enable obfuscation for subprojects. Default value is `false`.
 - `obfuscationSeed` - `Integer`. A seed that can be used to make obfuscation stable across builds. Default value is `null`, which means that the seed
   is computed from input files on each build.
+- `applyToBuildTypes` - Allows to apply paranoid transform for specific build types. Possible values are `'ALL'`, `'NONE'`, `'NOT_DEBUGGABLE'`. Default value is `'ALL'`
+- `enabled` — `boolean`. Allows to disable obfuscation for the project. Default value is `true`. *Deprecated*. Use `applyToBuildTypes = 'NONE'`
 
 How it works
 ------------

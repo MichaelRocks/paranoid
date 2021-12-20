@@ -16,9 +16,25 @@
 
 package io.michaelrocks.paranoid.plugin
 
+import io.michaelrocks.paranoid.processor.logging.getLogger
+
 open class ParanoidExtension {
+  @Deprecated(IS_ENABLED_DEPRECATION_WARNING)
   var isEnabled: Boolean = true
+    set(value) {
+      getLogger().warn("WARNING: $IS_ENABLED_DEPRECATION_WARNING")
+      field = value
+    }
   var isCacheable: Boolean = false
   var includeSubprojects: Boolean = false
   var obfuscationSeed: Int? = null
+  var applyToBuildTypes: BuildType = BuildType.ALL
 }
+
+enum class BuildType {
+  NONE,
+  ALL,
+  NOT_DEBUGGABLE
+}
+
+private const val IS_ENABLED_DEPRECATION_WARNING = "paranoid.enabled is deprecated. Use paranoid.applyToBuildTypes"
